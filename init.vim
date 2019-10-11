@@ -20,6 +20,7 @@ Plug 'jistr/vim-nerdtree-tabs'
 Plug 'itchyny/lightline.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'Shougo/denite.nvim'
+Plug 'raghur/fruzzy', {'do': { -> fruzzy#install()}}
 Plug 'tyrannicaltoucan/vim-quantum'
 " Auto root folder switcher
 Plug 'airblade/vim-rooter'
@@ -349,6 +350,9 @@ let g:rooter_change_directory_for_non_project_files = 'current'
 let g:rooter_patterns = ['Cargo.tom', 'package.json', '.git/']
 
 " DENITE
+let g:fruzzy#sortonempty = 1
+let g:fruzzy#usenative = 1
+call denite#custom#source('_', 'matchers', ['matcher/fruzzy'])
 call denite#custom#var('file/rec', 'command', ['rg', '--files', '--glob', '!.git'])
 call denite#custom#var('grep', 'command', ['rg'])
 call denite#custom#var('grep', 'default_opts', ['--hidden', '--vimgrep', '--heading', '-S'])
@@ -356,6 +360,8 @@ call denite#custom#var('grep', 'recursive_opts', [])
 call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
 call denite#custom#var('grep', 'separator', ['--'])
 call denite#custom#var('grep', 'final_opts', [])
+call denite#custom#source('grep', 'converters', ['converter/abbr_word'])
+call denite#custom#option('_', 'max_dynamic_update_candidates', 100000)
 
 let s:denite_options = {
       \ 'prompt' : '',
@@ -419,6 +425,7 @@ nnoremap \ :Denite grep<CR>
 nnoremap <Leader>pf :Denite file/rec<CR>
 nnoremap <Leader>pr :Denite file/old buffer<CR>
 nnoremap <C-o> :Denite coc-symbols<CR>
+map * :Denite -resume -refresh<CR>
 
 set termguicolors
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
