@@ -11,12 +11,12 @@ Plug 'sheerun/vim-polyglot'
 Plug 'rust-lang/rust.vim'
 Plug 'othree/html5.vim'
 Plug 'cakebaker/scss-syntax.vim'
+Plug 'ludovicchabant/vim-gutentags'
 " LSP support
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neoclide/coc-denite'
 " Fancy UI stuff
 Plug 'scrooloose/nerdtree'
-Plug 'jistr/vim-nerdtree-tabs'
 Plug 'itchyny/lightline.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'Shougo/denite.nvim'
@@ -424,7 +424,7 @@ endfunction
 nnoremap \ :Denite grep<CR>
 nnoremap <Leader>pf :Denite file/rec<CR>
 nnoremap <Leader>pr :Denite file/old buffer<CR>
-nnoremap <C-o> :Denite coc-symbols<CR>
+nnoremap <C-o> :Denite outline<CR>
 map * :Denite -resume -refresh<CR>
 
 set termguicolors
