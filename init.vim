@@ -11,7 +11,6 @@ Plug 'sheerun/vim-polyglot'
 Plug 'rust-lang/rust.vim'
 Plug 'othree/html5.vim'
 Plug 'cakebaker/scss-syntax.vim'
-Plug 'ludovicchabant/vim-gutentags'
 " LSP support
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neoclide/coc-denite'
@@ -147,6 +146,8 @@ nnoremap <Leader>tx :tabclose<CR>
 " Git
 nnoremap <Leader>ggn :GitGutterNextHunk<CR>
 nnoremap <Leader>ggp :GitGutterPrevHunk<CR>
+" Open terminal
+nnoremap <Leader>at :tabe<CR>:terminal<CR>i
 
 " NERDTree config
 let NERDTreeMinimalUI=1
@@ -362,6 +363,9 @@ call denite#custom#var('grep', 'separator', ['--'])
 call denite#custom#var('grep', 'final_opts', [])
 call denite#custom#source('grep', 'converters', ['converter/abbr_word'])
 call denite#custom#option('_', 'max_dynamic_update_candidates', 100000)
+call denite#custom#var('outline', 'command', ['ctags'])
+" Tell ctags write tags to stdin, so Denite can pick it up
+call denite#custom#var('outline', 'options', ['-f -', '--excmd=number'])
 
 let s:denite_options = {
       \ 'prompt' : '',
