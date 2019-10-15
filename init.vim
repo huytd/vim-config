@@ -167,11 +167,10 @@ function! FloatTerm()
   terminal
   startinsert
   " Close border window when terminal window close
-  autocmd CursorMoved * ++once call nvim_win_close(s:float_term_border_win, v:true)
+  autocmd TermClose * ++once :q | call nvim_win_close(s:float_term_border_win, v:true)
 endfunction
 
-"-----------------------------------
-
+" Key binding
 let mapleader=" "
 nnoremap <Leader>w :w<CR>
 nnoremap <Leader>l :vsplit<CR>
