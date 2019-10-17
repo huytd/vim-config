@@ -431,13 +431,7 @@ function! s:denite_my_settings() abort
                 \ denite#do_map('do_action')
     nnoremap <silent><buffer><expr> d
                 \ denite#do_map('do_action', 'delete')
-    nnoremap <silent><buffer><expr> <c-t>
-                \ denite#do_map('do_action', 'tabopen')
-    nnoremap <silent><buffer><expr> <c-v>
-                \ denite#do_map('do_action', 'vsplit')
-    nnoremap <silent><buffer><expr> <c-k>
-                \ denite#do_map('do_action', 'split')
-    nnoremap <silent><buffer><expr> p
+    nnoremap <silent><buffer><expr> <c-p>
                 \ denite#do_map('do_action', 'preview')
     nnoremap <silent><buffer><expr> q
                 \ denite#do_map('quit')
@@ -445,16 +439,18 @@ function! s:denite_my_settings() abort
                 \ denite#do_map('open_filter_buffer')
     nnoremap <silent><buffer><expr> <c-a>
                 \ denite#do_map('toggle_select_all')
+    nnoremap <silent><buffer><expr> <c-t>
+                \ denite#do_map('toggle_select').'j'
 endfunction
 
 autocmd FileType denite-filter call s:denite_filter_my_settings()
 function! s:denite_filter_my_settings() abort
     imap <silent><buffer> <tab> <Plug>(denite_filter_quit)
     inoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
-    inoremap <silent><buffer><expr> <c-t>
-                \ denite#do_map('do_action', 'tabopen')
     inoremap <silent><buffer><expr> <c-a>
                 \ denite#do_map('toggle_select_all')
+    inoremap <silent><buffer><expr> <c-t>
+                \ denite#do_map('toggle_select')
     inoremap <silent><buffer><expr> <c-o>
                 \ denite#do_map('do_action', 'quickfix')
     inoremap <silent><buffer><expr> <esc>
