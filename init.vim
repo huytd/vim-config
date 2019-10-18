@@ -132,7 +132,7 @@ map g/ <Plug>(incsearch-stay)
 " Floating Term
 let s:float_term_border_win = 0
 let s:float_term_win = 0
-function! FloatTerm()
+function! FloatTerm(...)
   " Configuration
   let height = float2nr((&lines - 2) * 0.6)
   let row = float2nr((&lines - height) / 2)
@@ -164,10 +164,14 @@ function! FloatTerm()
   hi FloatTermNormal term=None guibg=#2d3d45
   call setwinvar(s:float_term_border_win, '&winhl', 'Normal:FloatTermNormal')
   call setwinvar(s:float_term_win, '&winhl', 'Normal:FloatTermNormal')
-  terminal
+  if a:0 == 0
+    terminal
+  else
+    call termopen(a:1)
+  endif
   startinsert
   " Close border window when terminal window close
-  autocmd TermClose * ++once :q | call nvim_win_close(s:float_term_border_win, v:true)
+  autocmd TermClose * ++once :bd! | call nvim_win_close(s:float_term_border_win, v:true)
 endfunction
 
 " Key binding
@@ -196,6 +200,10 @@ nnoremap <Leader>tc :tabe<CR>
 nnoremap <Leader>tx :tabclose<CR>
 " Open terminal
 nnoremap <Leader>at :call FloatTerm()<CR>
+" Open node REPL
+nnoremap <Leader>an :call FloatTerm('"node"')<CR>
+" Open tig, yes TIG, A FLOATING TIGGGG!!!!!!
+nnoremap <Leader>ag :call FloatTerm('"tig"')<CR>
 
 " NERDTree config
 let NERDTreeMinimalUI=1
@@ -337,6 +345,7 @@ xmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
 " Remap for do codeAction of current line
 nmap <leader>ac  <Plug>(coc-codeaction)
+nmap <leader>ar  <Plug>(coc-rename)
 " Fix autofix problem of current line
 nmap <leader>qf  <Plug>(coc-fix-current)
 
