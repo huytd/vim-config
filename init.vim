@@ -18,7 +18,6 @@ Plug 'scrooloose/nerdtree'
 Plug 'itchyny/lightline.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'Shougo/denite.nvim'
-Plug 'raghur/fruzzy', {'do': { -> fruzzy#install()}}
 Plug 'tyrannicaltoucan/vim-quantum'
 " Auto root folder switcher
 Plug 'airblade/vim-rooter'
@@ -49,6 +48,9 @@ set mouse=a " enable mouse for all mode
 set wildoptions=pum
 set pumblend=20
 set cursorline
+
+set foldmethod=indent
+set foldlevel=99
 
 let g:is_posix = 1
 
@@ -93,6 +95,8 @@ vmap D y'>p
 " Map Emacs like movement in Insert mode
 inoremap <C-n> <Down>
 inoremap <C-p> <Up>
+inoremap <C-f> <Right>
+inoremap <C-b> <Left>
 inoremap <C-e> <C-o>$
 inoremap <C-a> <C-o>^
 
@@ -123,6 +127,14 @@ set expandtab
 set autoindent
 set smartindent
 
+" Persistent undo
+" Don't forget mkdir folder $HOME/.vim/undo
+set undofile
+set undodir=$HOME/.config/nvim/undo
+set undolevels=1000
+set undoreload=10000
+
+let g:NERDSpaceDelims = 1
 map mm <Plug>NERDCommenterToggle
 
 map /  <Plug>(incsearch-forward)
@@ -187,6 +199,7 @@ nnoremap <Leader>w= :wincmd =<CR>
 nnoremap <Leader>e :QuickRunExecute<CR>
 nnoremap <Leader>wb :e#<CR>
 nnoremap <Leader>qq :bd<CR>
+nnoremap <Leader>qk :call DeleteCurrentFileAndBuffer()<CR>
 nnoremap <Leader>ss :mksession! .work<CR>
 nnoremap <Leader>sr :so .work<CR>
 nnoremap <Leader><Leader>r :so ~/.config/nvim/init.vim<CR>
@@ -399,9 +412,6 @@ let g:rooter_change_directory_for_non_project_files = 'current'
 let g:rooter_patterns = ['Cargo.tom', 'package.json', '.git/']
 
 " DENITE
-let g:fruzzy#sortonempty = 1
-let g:fruzzy#usenative = 1
-call denite#custom#source('_', 'matchers', ['matcher/fruzzy'])
 call denite#custom#var('file/rec', 'command', ['rg', '--files', '--glob', '!.git'])
 call denite#custom#var('grep', 'command', ['rg'])
 call denite#custom#var('grep', 'default_opts', ['--hidden', '--vimgrep', '--heading', '-S'])
