@@ -1,4 +1,5 @@
 {
+  "coc.preferences.useQuickfixForLocations": true,
   "diagnostic.warningSign": "",
   "diagnostic.errorSign": "",
   "diagnostic.infoSign": "",
@@ -29,5 +30,7 @@
     "snippet": "\ue60b",
     "typeParameter": "\uf728",
     "default": "\uf29c"
-  }
+  },
+  "typescript.showUnused": true,
+  "javascript.showUnused": true
 }
