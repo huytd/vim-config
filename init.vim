@@ -10,6 +10,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'rust-lang/rust.vim'
 Plug 'othree/html5.vim'
 Plug 'cakebaker/scss-syntax.vim'
+Plug 'ap/vim-css-color'
 " LSP support
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neoclide/coc-denite'
@@ -31,8 +32,6 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'tpope/vim-abolish' " For case perserved subtitue :%S
 Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-multiple-cursors'
-" Display source outline
-Plug 'liuchengxu/vista.vim'
 call plug#end()
 
 filetype plugin indent on
@@ -159,8 +158,6 @@ function! FloatTerm(...)
         \ 'height': height + 2,
         \ 'style': 'minimal'
         \ }
-  let border_buf = nvim_create_buf(v:false, v:true)
-  let s:float_term_border_win = nvim_open_win(border_buf, v:true, border_opts)
   " Terminal Window
   let opts = {
         \ 'relative': 'editor',
@@ -170,12 +167,18 @@ function! FloatTerm(...)
         \ 'height': height,
         \ 'style': 'minimal'
         \ }
+  let top = "╭" . repeat("─", width + 2) . "╮"
+  let mid = "│" . repeat(" ", width + 2) . "│"
+  let bot = "╰" . repeat("─", width + 2) . "╯"
+  let lines = [top] + repeat([mid], height) + [bot]
+  let bbuf = nvim_create_buf(v:false, v:true)
+  call nvim_buf_set_lines(bbuf, 0, -1, v:true, lines)
+  let s:float_term_border_win = nvim_open_win(bbuf, v:true, border_opts)
   let buf = nvim_create_buf(v:false, v:true)
   let s:float_term_win = nvim_open_win(buf, v:true, opts)
   " Styling
-  hi FloatTermNormal term=None guibg=#2d3d45
-  call setwinvar(s:float_term_border_win, '&winhl', 'Normal:FloatTermNormal')
-  call setwinvar(s:float_term_win, '&winhl', 'Normal:FloatTermNormal')
+  call setwinvar(s:float_term_border_win, '&winhl', 'Normal:Normal')
+  call setwinvar(s:float_term_win, '&winhl', 'Normal:Normal')
   if a:0 == 0
     terminal
   else
@@ -205,7 +208,6 @@ nnoremap <Leader>sr :so .work<CR>
 nnoremap <Leader><Leader>r :so ~/.config/nvim/init.vim<CR>
 nnoremap <Leader>n :NERDTree<CR>
 nnoremap <Leader>f :NERDTreeFind<CR>
-nnoremap <Leader><Leader>o :Vista coc<CR>
 "Buffer
 nnoremap <Leader>tn :tabn<CR>
 nnoremap <Leader>tp :tabp<CR>
@@ -234,11 +236,6 @@ set clipboard=unnamed
 function! DeleteCurrentFileAndBuffer()
   call delete(expand('%'))
   bdelete!
-endfunction
-
-function! NearestMethodOrFunction() abort
-  let fname = get(b:, 'vista_nearest_method_or_function', '')
-  return len(fname) > 0 ? "\u0192 " . fname : ""
 endfunction
 
 function! DrawGitBranchInfo()
@@ -272,7 +269,7 @@ endfunction
 let g:lightline = {
       \ 'colorscheme': 'quantum',
       \ 'active': {
-      \   'left': [ ['fileicon'], [ 'cocstatus' ], [ 'filename', 'nearmethod' ] ],
+      \   'left': [ ['fileicon'], [ 'cocstatus' ], [ 'filename' ] ],
       \   'right': [ [ 'icongitbranch' ], [ 'lineinfo' ] ]
       \ },
       \ 'inactive': {
@@ -287,13 +284,11 @@ let g:lightline = {
       \   'gitbranch': 'fugitive#head',
       \   'cocstatus': 'coc#status',
       \   'filename': 'LightLineFilename',
-      \   'nearmethod': 'NearestMethodOrFunction'
       \ },
       \ }
 
 " Use auocmd to force lightline update.
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
-autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 
 set shortmess+=c
 set signcolumn=yes
