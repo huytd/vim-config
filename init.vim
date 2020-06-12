@@ -1,30 +1,20 @@
 call plug#begin()
-" Some Git stuff
 Plug 'tpope/vim-fugitive'
-" EditorConfig
 Plug 'editorconfig/editorconfig-vim'
-" Execute code in current buffer
 Plug 'huytd/vim-quickrun'
-" Language support things
 Plug 'sheerun/vim-polyglot'
-Plug 'rust-lang/rust.vim'
 Plug 'othree/html5.vim'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'ap/vim-css-color'
-" LSP support
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'neoclide/coc-denite'
-" Fancy UI stuff
+Plug 'cormacrelf/vim-colors-github'
 Plug 'scrooloose/nerdtree'
 Plug 'itchyny/lightline.vim'
+Plug 'rakr/vim-two-firewatch'
 Plug 'ryanoasis/vim-devicons'
-Plug 'Shougo/denite.nvim'
-Plug 'tyrannicaltoucan/vim-quantum'
-" Auto root folder switcher
 Plug 'airblade/vim-rooter'
-" Moving around easier
 Plug 'easymotion/vim-easymotion'
-" Improving editing experience
+Plug 'unkiwii/vim-nerdtree-sync'
 Plug 'vim-scripts/matchit.zip'
 Plug 'tpope/vim-surround'
 Plug 'jiangmiao/auto-pairs'
@@ -32,6 +22,9 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'tpope/vim-abolish' " For case perserved subtitue :%S
 Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-multiple-cursors'
+Plug 'eugen0329/vim-esearch'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --no-bash' }
+Plug 'junegunn/fzf.vim'
 call plug#end()
 
 filetype plugin indent on
@@ -44,8 +37,6 @@ set hidden
 set nobackup
 set nowritebackup
 set mouse=a " enable mouse for all mode
-set wildoptions=pum
-set pumblend=20
 set cursorline
 
 set foldmethod=indent
@@ -74,6 +65,21 @@ function! s:markdown_mode_setup()
   CocDisable
 endfunction
 
+" FZF config
+let g:fzf_layout = { 'window': {
+      \ 'width': 0.9,
+      \ 'height': 0.7,
+      \ 'highlight': 'Comment',
+      \ 'rounded': v:false } }
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
+
+" Esearch config
+let g:esearch = {
+  \ 'adapter': 'rg',
+  \ 'backend': 'nvim'
+  \}
+call esearch#out#win#map('<Enter>', 'tab')
+
 " Custom icon for coc.nvim statusline
 let g:coc_status_error_sign=" "
 let g:coc_status_warning_sign=" "
@@ -87,13 +93,17 @@ nnoremap <Right> :echoe "Use l"<CR>
 nnoremap <Up> :echoe "Use k"<CR>
 nnoremap <Down> :echoe "Use j"<CR>
 nnoremap <ESC><ESC> :nohlsearch<CR>
+nnoremap L l
+nnoremap H h
+nnoremap l w
+nnoremap h b
 
 " Duplicate everything selected
 vmap D y'>p
 
 " Map Emacs like movement in Insert mode
-inoremap <C-n> <Down>
-inoremap <C-p> <Up>
+" inoremap <C-n> <Down>
+" inoremap <C-p> <Up>
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
 inoremap <C-e> <C-o>$
@@ -104,14 +114,13 @@ nnoremap <C-k> <C-u>
 nnoremap <C-j> <C-d>
 
 set background=dark
-let g:quantum_italics=1
-colorscheme quantum
+colo two-firewatch
 
 if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
-	syntax on
+  syntax on
 endif
 
-set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:·
+set listchars=tab:>·,trail:~,extends:>,precedes:<
 set list
 
 set backspace=eol,start,indent
@@ -140,6 +149,8 @@ map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
 
+set wildoptions=pum
+set pumblend=20
 " Floating Term
 let s:float_term_border_win = 0
 let s:float_term_win = 0
@@ -177,7 +188,8 @@ function! FloatTerm(...)
   let buf = nvim_create_buf(v:false, v:true)
   let s:float_term_win = nvim_open_win(buf, v:true, opts)
   " Styling
-  call setwinvar(s:float_term_border_win, '&winhl', 'Normal:Normal')
+  hi FloatWinBorder guifg=#87bb7c
+  call setwinvar(s:float_term_border_win, '&winhl', 'Normal:FloatWinBorder')
   call setwinvar(s:float_term_win, '&winhl', 'Normal:Normal')
   if a:0 == 0
     terminal
@@ -213,12 +225,14 @@ nnoremap <Leader>tn :tabn<CR>
 nnoremap <Leader>tp :tabp<CR>
 nnoremap <Leader>tc :tabe<CR>
 nnoremap <Leader>tx :tabclose<CR>
+
 " Open terminal
 nnoremap <Leader>at :call FloatTerm()<CR>
-" Open node REPL
-nnoremap <Leader>an :call FloatTerm('"node"')<CR>
 " Open tig, yes TIG, A FLOATING TIGGGG!!!!!!
 nnoremap <Leader>ag :call FloatTerm('"tig"')<CR>
+
+nnoremap <silent> <Leader>pf :Files<CR>
+nnoremap <silent> \ :call esearch#init()<CR>
 
 " NERDTree config
 let NERDTreeMinimalUI=1
@@ -244,7 +258,8 @@ function! DrawGitBranchInfo()
 endfunction
 
 function! MyFiletype()
-  return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
+  "  return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
+  return ''
 endfunction
 
 function! LightLineFilename()
@@ -267,7 +282,7 @@ function! LightLineFilename()
 endfunction
 
 let g:lightline = {
-      \ 'colorscheme': 'quantum',
+      \ 'colorscheme': 'one',
       \ 'active': {
       \   'left': [ ['fileicon'], [ 'cocstatus' ], [ 'filename' ] ],
       \   'right': [ [ 'icongitbranch' ], [ 'lineinfo' ] ]
@@ -306,12 +321,13 @@ function! s:check_back_space() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
 " Coc only does snippet and additional edit on confirm.
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
@@ -373,10 +389,6 @@ endfunction
 " Add status line support, for integration with other plugin, checkout `:h coc-status`
 set statusline^=%{coc#status()}%{StatusDiagnostic()}
 
-" Vim easymotion
-nmap <silent> ;; <Plug>(easymotion-overwin-f)
-nmap <silent> ;l <Plug>(easymotion-overwin-line)
-
 " Show the style name of thing under the cursor
 " Shamelessly taken from https://github.com/tpope/vim-scriptease
 function! FaceNames(...) abort
@@ -406,80 +418,9 @@ nnoremap zs :<C-U>exe DescribeFace(v:count)<CR>
 let g:rooter_change_directory_for_non_project_files = 'current'
 let g:rooter_patterns = ['Cargo.tom', 'package.json', '.git/']
 
-" DENITE
-call denite#custom#var('file/rec', 'command', ['rg', '--files', '--glob', '!.git'])
-call denite#custom#var('grep', 'command', ['rg'])
-call denite#custom#var('grep', 'default_opts', ['--hidden', '--vimgrep', '--heading', '-S'])
-call denite#custom#var('grep', 'recursive_opts', [])
-call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
-call denite#custom#var('grep', 'separator', ['--'])
-call denite#custom#var('grep', 'final_opts', [])
-call denite#custom#source('grep', 'converters', ['converter/abbr_word'])
-call denite#custom#option('_', 'max_dynamic_update_candidates', 100000)
-call denite#custom#var('outline', 'command', ['ctags'])
-" Tell ctags write tags to stdin, so Denite can pick it up
-call denite#custom#var('outline', 'options', ['-f -', '--excmd=number'])
-
-let s:denite_options = {
-      \ 'prompt' : '',
-      \ 'split': 'floating',
-      \ 'start_filter': 1,
-      \ 'auto_resize': 1,
-      \ 'source_names': 'short',
-      \ 'direction': 'botright',
-      \ 'statusline': 0,
-      \ 'cursorline': 0,
-      \ 'highlight_matched_char': 'WildMenu',
-      \ 'highlight_matched_range': 'WildMenu',
-      \ 'highlight_window_background': 'Visual',
-      \ 'highlight_filter_background': 'CocListMagentaGray',
-      \ 'highlight_preview_line': 'Cursor',
-      \ 'vertical_preview': 1
-      \ }
-
-call denite#custom#option('default', s:denite_options)
-
-autocmd FileType denite call s:denite_my_settings()
-function! s:denite_my_settings() abort
-    nnoremap <silent><buffer><expr> <CR>
-                \ denite#do_map('do_action')
-    nnoremap <silent><buffer><expr> d
-                \ denite#do_map('do_action', 'delete')
-    nnoremap <silent><buffer><expr> <c-p>
-                \ denite#do_map('do_action', 'preview')
-    nnoremap <silent><buffer><expr> q
-                \ denite#do_map('quit')
-    nnoremap <silent><buffer><expr> i
-                \ denite#do_map('open_filter_buffer')
-    nnoremap <silent><buffer><expr> <c-a>
-                \ denite#do_map('toggle_select_all')
-    nnoremap <silent><buffer><expr> <c-t>
-                \ denite#do_map('toggle_select').'j'
-endfunction
-
-autocmd FileType denite-filter call s:denite_filter_my_settings()
-function! s:denite_filter_my_settings() abort
-    imap <silent><buffer> <tab> <Plug>(denite_filter_quit)
-    inoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
-    inoremap <silent><buffer><expr> <c-a>
-                \ denite#do_map('toggle_select_all')
-    inoremap <silent><buffer><expr> <c-t>
-                \ denite#do_map('toggle_select')
-    inoremap <silent><buffer><expr> <c-o>
-                \ denite#do_map('do_action', 'quickfix')
-    inoremap <silent><buffer><expr> <esc>
-                \ denite#do_map('quit')
-    inoremap <silent><buffer> <C-j>
-                \ <Esc><C-w>p:call cursor(line('.')+1,0)<CR><C-w>pA
-    inoremap <silent><buffer> <C-k>
-                \ <Esc><C-w>p:call cursor(line('.')-1,0)<CR><C-w>pA
-endfunction
-
-nnoremap \ :Denite grep<CR>
-nnoremap <Leader>pf :Denite file/rec<CR>
-nnoremap <Leader>pr :Denite file/old buffer<CR>
-nnoremap <C-o> :Denite outline<CR>
-map * :Denite -resume -refresh<CR>
+" Nerdtree Sync
+let g:nerdtree_sync_cursorline = 1
+let g:NERDTreeHighlightCursorline = 1
 
 " Multiple Cursor
 let g:multi_cursor_use_default_mapping=0
@@ -497,12 +438,7 @@ let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 " Some custom style
-highlight Normal guibg=NONE
+highlight SignColumn guibg=NONE
 highlight EasyMotionTargetDefault guifg=#ffb400
-highlight NonText guifg=#354751
-highlight VertSplit guifg=#212C32
-highlight link deniteSource_SymbolsName Symbol
-highlight link deniteSource_SymbolsHeader String
-highlight link deniteSource_grepLineNR deniteSource_grepFile
-highlight WildMenu guibg=NONE guifg=#87bb7c
-highlight CursorLineNr guibg=NONE
+highlight WildMenu guifg=#87bb7c
+highlight VertSplit guifg=#1f2329
