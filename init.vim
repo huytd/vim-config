@@ -5,14 +5,15 @@ Plug 'huytd/vim-quickrun'
 Plug 'sheerun/vim-polyglot'
 Plug 'othree/html5.vim'
 Plug 'cakebaker/scss-syntax.vim'
-Plug 'ap/vim-css-color'
+Plug 'pangloss/vim-javascript'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'cormacrelf/vim-colors-github'
 Plug 'scrooloose/nerdtree'
 Plug 'itchyny/lightline.vim'
 Plug 'rakr/vim-two-firewatch'
 Plug 'ryanoasis/vim-devicons'
-Plug 'airblade/vim-rooter'
 Plug 'easymotion/vim-easymotion'
 Plug 'unkiwii/vim-nerdtree-sync'
 Plug 'vim-scripts/matchit.zip'
@@ -25,9 +26,16 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'eugen0329/vim-esearch'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --no-bash' }
 Plug 'junegunn/fzf.vim'
+Plug 't9md/vim-choosewin'
+Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' }
+Plug 'kaicataldo/material.vim'
+Plug 'Yggdroot/indentLine'
 call plug#end()
 
 filetype plugin indent on
+
+"Todo file
+autocmd BufNewFile,BufRead *.todo set syntax=todo
 
 " Auto remove trailing spaces
 autocmd BufWritePre * %s/\s\+$//e
@@ -54,16 +62,11 @@ set ttimeout
 set ttimeoutlen=10
 set termguicolors
 set ignorecase
+set relativenumber
 
-" Tweak for Markdown mode
-autocmd FileType markdown call s:markdown_mode_setup()
-function! s:markdown_mode_setup()
-  set wrap
-  set nonumber
-  set textwidth=80
-  set formatoptions+=t
-  CocDisable
-endfunction
+" Vim color highlighting
+let g:Hexokinase_highlighters = ['virtual']
+let g:Hexokinase_virtualText = '▩'
 
 " FZF config
 let g:fzf_layout = { 'window': {
@@ -73,12 +76,21 @@ let g:fzf_layout = { 'window': {
       \ 'rounded': v:false } }
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
 
+" Indent Guide
+let g:indentLine_char = '│'
+let g:indentLine_color_gui = '#3a3f58'
+
 " Esearch config
 let g:esearch = {
   \ 'adapter': 'rg',
   \ 'backend': 'nvim'
   \}
 call esearch#out#win#map('<Enter>', 'tab')
+
+" JS config
+let g:javascript_plugin_jsdoc = 1
+let g:polyglot_disabled = ['jsx', 'tsx', 'js', 'ts']
+let g:vim_jsx_pretty_template_tags = ['html', 'jsx', 'tsx']
 
 " Custom icon for coc.nvim statusline
 let g:coc_status_error_sign=" "
@@ -98,9 +110,6 @@ nnoremap H h
 nnoremap l w
 nnoremap h b
 
-" Duplicate everything selected
-vmap D y'>p
-
 " Map Emacs like movement in Insert mode
 " inoremap <C-n> <Down>
 " inoremap <C-p> <Up>
@@ -114,7 +123,9 @@ nnoremap <C-k> <C-u>
 nnoremap <C-j> <C-d>
 
 set background=dark
-colo two-firewatch
+let g:material_theme_style = 'palenight'
+let g:material_terminal_italics = 1
+colo material
 
 if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
   syntax on
@@ -141,6 +152,8 @@ set undofile
 set undodir=$HOME/.config/nvim/undo
 set undolevels=1000
 set undoreload=10000
+
+set updatetime=300
 
 let g:NERDSpaceDelims = 1
 map mm <Plug>NERDCommenterToggle
@@ -203,7 +216,6 @@ endfunction
 
 " Key binding
 let mapleader=" "
-nnoremap <Leader>w :w<CR>
 nnoremap <Leader>l :vsplit<CR>
 nnoremap <Leader>k :split<CR>
 nnoremap <Leader>wh :wincmd h<CR>
@@ -215,8 +227,8 @@ nnoremap <Leader>e :QuickRunExecute<CR>
 nnoremap <Leader>wb :e#<CR>
 nnoremap <Leader>qq :bd<CR>
 nnoremap <Leader>qk :call DeleteCurrentFileAndBuffer()<CR>
-nnoremap <Leader>ss :mksession! .work<CR>
-nnoremap <Leader>sr :so .work<CR>
+nnoremap <Leader>ss :mksession! .vimsession<CR>
+nnoremap <Leader>sr :so .vimsession<CR>
 nnoremap <Leader><Leader>r :so ~/.config/nvim/init.vim<CR>
 nnoremap <Leader>n :NERDTree<CR>
 nnoremap <Leader>f :NERDTreeFind<CR>
@@ -225,6 +237,8 @@ nnoremap <Leader>tn :tabn<CR>
 nnoremap <Leader>tp :tabp<CR>
 nnoremap <Leader>tc :tabe<CR>
 nnoremap <Leader>tx :tabclose<CR>
+" Jump window
+nmap <Leader>ww <Plug>(choosewin)
 
 " Open terminal
 nnoremap <Leader>at :call FloatTerm()<CR>
@@ -232,7 +246,15 @@ nnoremap <Leader>at :call FloatTerm()<CR>
 nnoremap <Leader>ag :call FloatTerm('"tig"')<CR>
 
 nnoremap <silent> <Leader>pf :Files<CR>
-nnoremap <silent> \ :call esearch#init()<CR>
+nnoremap <silent> <Leader>pt :Buffers<CR>
+nnoremap <silent> <Leader>pb :Buffers<CR>
+nnoremap <silent> <Leader>pr :History<CR>
+nnoremap <silent> <c-\> :call esearch#init()<CR>
+nnoremap <silent> \ :Rg<CR>
+nnoremap <silent> <c-o> :CocList outline<CR>
+
+" Choose win
+let g:choosewin_overlay_enable = 1
 
 " NERDTree config
 let NERDTreeMinimalUI=1
@@ -258,7 +280,7 @@ function! DrawGitBranchInfo()
 endfunction
 
 function! MyFiletype()
-  "  return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
+  " return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
   return ''
 endfunction
 
@@ -282,13 +304,13 @@ function! LightLineFilename()
 endfunction
 
 let g:lightline = {
-      \ 'colorscheme': 'one',
+      \ 'colorscheme': 'material_vim',
       \ 'active': {
-      \   'left': [ ['fileicon'], [ 'cocstatus' ], [ 'filename' ] ],
-      \   'right': [ [ 'icongitbranch' ], [ 'lineinfo' ] ]
+      \   'left': [ [], [ 'filename' ] ],
+      \   'right': [ [], ['cocstatus', 'lineinfo', 'icongitbranch'] ]
       \ },
       \ 'inactive': {
-      \   'left': [ [], ['fileicon'], [ 'filename' ] ],
+      \   'left': [ ['fileicon'], [ 'filename' ] ],
       \   'right': []
       \ },
       \ 'component': { 'lineinfo': ' %2p%% %3l:%-2v' },
@@ -336,9 +358,6 @@ nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-" Use L to highlight the symbol under the cursor
-nnoremap <silent> L :call CocActionAsync('highlight')<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -389,35 +408,6 @@ endfunction
 " Add status line support, for integration with other plugin, checkout `:h coc-status`
 set statusline^=%{coc#status()}%{StatusDiagnostic()}
 
-" Show the style name of thing under the cursor
-" Shamelessly taken from https://github.com/tpope/vim-scriptease
-function! FaceNames(...) abort
-  if a:0
-    let [line, col] = [a:1, a:2]
-  else
-    let [line, col] = [line('.'), col('.')]
-  endif
-  return reverse(map(synstack(line, col), 'synIDattr(v:val,"name")'))
-endfunction
-
-function! DescribeFace(count) abort
-  if a:count
-    let name = get(FaceNames(), a:count-1, '')
-    if name !=# ''
-      return 'syntax list '.name
-    endif
-  else
-    echo join(FaceNames(), ' ')
-  endif
-  return ''
-endfunction
-
-nnoremap zs :<C-U>exe DescribeFace(v:count)<CR>
-
-" Auto change root of the project
-let g:rooter_change_directory_for_non_project_files = 'current'
-let g:rooter_patterns = ['Cargo.tom', 'package.json', '.git/']
-
 " Nerdtree Sync
 let g:nerdtree_sync_cursorline = 1
 let g:NERDTreeHighlightCursorline = 1
@@ -442,3 +432,10 @@ highlight SignColumn guibg=NONE
 highlight EasyMotionTargetDefault guifg=#ffb400
 highlight WildMenu guifg=#87bb7c
 highlight VertSplit guifg=#1f2329
+highlight CocInfoSign guifg=#55606d
+highlight CocInfoFloat guifg=#dde0e4
+highlight DiffAdd guibg=NONE
+highlight DiffAdded guibg=NONE
+highlight DiffChange guibg=NONE
+highlight DiffDelete guibg=NONE
+highlight CursorLine guibg=#33384d
