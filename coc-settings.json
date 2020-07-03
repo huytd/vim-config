@@ -2,8 +2,8 @@
   "coc.preferences.useQuickfixForLocations": true,
   "diagnostic.warningSign": "",
   "diagnostic.errorSign": "",
-  "diagnostic.infoSign": "",
-  "diagnostic.hintSign": "",
+  "diagnostic.infoSign": "",
+  "diagnostic.hintSign": "ﯦ",
   "suggest.completionItemKindLabels": {
     "keyword": "\uf1de",
     "variable": "\ue79b",
