@@ -9,10 +9,8 @@ Plug 'pangloss/vim-javascript'
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'cormacrelf/vim-colors-github'
 Plug 'scrooloose/nerdtree'
 Plug 'itchyny/lightline.vim'
-Plug 'rakr/vim-two-firewatch'
 Plug 'ryanoasis/vim-devicons'
 Plug 'easymotion/vim-easymotion'
 Plug 'unkiwii/vim-nerdtree-sync'
@@ -30,6 +28,9 @@ Plug 't9md/vim-choosewin'
 Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'kaicataldo/material.vim'
 Plug 'Yggdroot/indentLine'
+Plug 'atelierbram/Base2Tone-vim'
+Plug 'sonph/onehalf', {'rtp': 'vim/'}
+Plug 'tyrannicaltoucan/vim-quantum'
 call plug#end()
 
 filetype plugin indent on
@@ -78,7 +79,7 @@ let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
 
 " Indent Guide
 let g:indentLine_char = '│'
-let g:indentLine_color_gui = '#3a3f58'
+let g:indentLine_color_gui = '#363442'
 
 " Esearch config
 let g:esearch = {
@@ -110,6 +111,8 @@ nnoremap H h
 nnoremap l w
 nnoremap h b
 
+vnoremap p "_dP
+
 " Map Emacs like movement in Insert mode
 " inoremap <C-n> <Down>
 " inoremap <C-p> <Up>
@@ -123,9 +126,8 @@ nnoremap <C-k> <C-u>
 nnoremap <C-j> <C-d>
 
 set background=dark
-let g:material_theme_style = 'palenight'
-let g:material_terminal_italics = 1
-colo material
+" let g:quantum_black=1
+colo bright-quantum
 
 if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
   syntax on
@@ -163,7 +165,7 @@ map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
 
 set wildoptions=pum
-set pumblend=20
+set pumblend=1
 " Floating Term
 let s:float_term_border_win = 0
 let s:float_term_win = 0
@@ -250,6 +252,8 @@ nnoremap <silent> <Leader>pt :Buffers<CR>
 nnoremap <silent> <Leader>pb :Buffers<CR>
 nnoremap <silent> <Leader>pr :History<CR>
 nnoremap <silent> <c-\> :call esearch#init()<CR>
+
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 nnoremap <silent> \ :Rg<CR>
 nnoremap <silent> <c-o> :CocList outline<CR>
 
@@ -304,7 +308,7 @@ function! LightLineFilename()
 endfunction
 
 let g:lightline = {
-      \ 'colorscheme': 'material_vim',
+      \ 'colorscheme': 'onehalfdark',
       \ 'active': {
       \   'left': [ [], [ 'filename' ] ],
       \   'right': [ [], ['cocstatus', 'lineinfo', 'icongitbranch'] ]
@@ -332,16 +336,24 @@ set signcolumn=yes
 
 " Use tab for trigger completion with characters ahead and navigate.
 " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+" inoremap <silent><expr> <TAB>
+      " \ pumvisible() ? "\<C-n>" :
+      " \ <SID>check_back_space() ? "\<TAB>" :
+      " \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
+
+let g:coc_snippet_next = '<tab>'
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
 " Coc only does snippet and additional edit on confirm.
@@ -428,14 +440,15 @@ let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 " Some custom style
+highlight Normal guibg=NONE
 highlight SignColumn guibg=NONE
 highlight EasyMotionTargetDefault guifg=#ffb400
 highlight WildMenu guifg=#87bb7c
-highlight VertSplit guifg=#1f2329
+highlight VertSplit guifg=#1f2329 guibg=NONE
 highlight CocInfoSign guifg=#55606d
-highlight CocInfoFloat guifg=#dde0e4
+highlight LineNr guifg=#454A54
 highlight DiffAdd guibg=NONE
 highlight DiffAdded guibg=NONE
 highlight DiffChange guibg=NONE
 highlight DiffDelete guibg=NONE
-highlight CursorLine guibg=#33384d
+highlight EndOfBuffer guifg=#282c34
