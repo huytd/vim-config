@@ -32,5 +32,10 @@
     "default": "\uf29c"
   },
   "typescript.showUnused": true,
-  "javascript.showUnused": true
+  "javascript.showUnused": true,
+  "suggest.noselect": false,
+  "rust-analyzer.inlayHints.chainingHints": true,
+  "rust-analyzer.inlayHints.typeHints": true,
+  "rust-analyzer.inlayHints.parameterHints": true,
+  "rust-analyzer.diagnostics.enable": true,
 }

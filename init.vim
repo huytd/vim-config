@@ -2,7 +2,6 @@ call plug#begin()
 Plug 'tpope/vim-fugitive'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'huytd/vim-quickrun'
-Plug 'sheerun/vim-polyglot'
 Plug 'othree/html5.vim'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'pangloss/vim-javascript'
@@ -26,11 +25,14 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --no-bash' }
 Plug 'junegunn/fzf.vim'
 Plug 't9md/vim-choosewin'
 Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' }
-Plug 'kaicataldo/material.vim'
-Plug 'Yggdroot/indentLine'
-Plug 'atelierbram/Base2Tone-vim'
-Plug 'sonph/onehalf', {'rtp': 'vim/'}
-Plug 'tyrannicaltoucan/vim-quantum'
+
+" TreeSitter is only 0.5-dev
+if !has("gui_vimr")
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+endif
+
+Plug 'nightsense/snow'
+Plug 'dgraham/xcode-low-key-vim'
 call plug#end()
 
 filetype plugin indent on
@@ -47,7 +49,6 @@ set nobackup
 set nowritebackup
 set mouse=a " enable mouse for all mode
 set cursorline
-
 set foldmethod=indent
 set foldlevel=99
 
@@ -77,10 +78,6 @@ let g:fzf_layout = { 'window': {
       \ 'rounded': v:false } }
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
 
-" Indent Guide
-let g:indentLine_char = '│'
-let g:indentLine_color_gui = '#363442'
-
 " Esearch config
 let g:esearch = {
   \ 'adapter': 'rg',
@@ -90,7 +87,6 @@ call esearch#out#win#map('<Enter>', 'tab')
 
 " JS config
 let g:javascript_plugin_jsdoc = 1
-let g:polyglot_disabled = ['jsx', 'tsx', 'js', 'ts']
 let g:vim_jsx_pretty_template_tags = ['html', 'jsx', 'tsx']
 
 " Custom icon for coc.nvim statusline
@@ -125,9 +121,8 @@ inoremap <C-a> <C-o>^
 nnoremap <C-k> <C-u>
 nnoremap <C-j> <C-d>
 
-set background=dark
-" let g:quantum_black=1
-colo bright-quantum
+set background=light
+colo tutti
 
 if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
   syntax on
@@ -284,8 +279,7 @@ function! DrawGitBranchInfo()
 endfunction
 
 function! MyFiletype()
-  " return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
-  return ''
+  return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
 endfunction
 
 function! LightLineFilename()
@@ -308,24 +302,25 @@ function! LightLineFilename()
 endfunction
 
 let g:lightline = {
-      \ 'colorscheme': 'onehalfdark',
+      \ 'colorscheme': 'snow_light',
       \ 'active': {
-      \   'left': [ [], [ 'filename' ] ],
+      \   'left': [ [], ['filetype', 'filename' ] ],
       \   'right': [ [], ['cocstatus', 'lineinfo', 'icongitbranch'] ]
       \ },
       \ 'inactive': {
-      \   'left': [ ['fileicon'], [ 'filename' ] ],
+      \   'left': [ [], [ 'filetype', 'filename' ] ],
       \   'right': []
       \ },
       \ 'component': { 'lineinfo': ' %2p%% %3l:%-2v' },
       \ 'component_function': {
-      \   'fileicon': 'MyFiletype',
+      \   'filetype': 'MyFiletype',
       \   'icongitbranch': 'DrawGitBranchInfo',
       \   'iconline': 'DrawLineInfo',
       \   'gitbranch': 'fugitive#head',
       \   'cocstatus': 'coc#status',
       \   'filename': 'LightLineFilename',
       \ },
+      \ 'subseparator': { 'left': '', 'right': '' }
       \ }
 
 " Use auocmd to force lightline update.
@@ -440,15 +435,20 @@ let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 " Some custom style
-highlight Normal guibg=NONE
-highlight SignColumn guibg=NONE
-highlight EasyMotionTargetDefault guifg=#ffb400
-highlight WildMenu guifg=#87bb7c
-highlight VertSplit guifg=#1f2329 guibg=NONE
-highlight CocInfoSign guifg=#55606d
-highlight LineNr guifg=#454A54
-highlight DiffAdd guibg=NONE
-highlight DiffAdded guibg=NONE
-highlight DiffChange guibg=NONE
-highlight DiffDelete guibg=NONE
-highlight EndOfBuffer guifg=#282c34
+" highlight Normal guibg=NONE
+" highlight SignColumn guibg=NONE
+" highlight VertSplit guibg=NONE
+" highlight EasyMotionTargetDefault guifg=#ffb400
+" highlight WildMenu guifg=#87bb7c
+" highlight CocInfoSign guifg=#97afbb
+" highlight LineNr guifg=#e8e8e8 guibg=NONE
+" highlight DiffAdd guibg=NONE
+" highlight DiffAdded guibg=NONE
+" highlight DiffChange guibg=NONE
+" highlight DiffDelete guibg=NONE
+" highlight EndOfBuffer guifg=#282c34
+" highlight CocRustChainingHint guifg=#456182
+
+if !has("gui_vimr")
+  luafile $HOME/.config/nvim/treesitter.lua
+endif
