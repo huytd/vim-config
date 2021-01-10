@@ -1,3 +1,7 @@
+For light theme, please use [`light-theme` branch](https://github.com/huytd/vim-config/tree/light-theme).
+
+---
+
 The font used in the screenshot is [Haskplex Nerd](https://github.com/huytd/haskplex-font).
 
 ## Installation
