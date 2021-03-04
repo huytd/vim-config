@@ -21,28 +21,44 @@ Plug 'tpope/vim-abolish' " For case perserved subtitue :%S
 Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'eugen0329/vim-esearch'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --no-bash' }
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 't9md/vim-choosewin'
-Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' }
-
-" TreeSitter is only 0.5-dev
-if !has("gui_vimr")
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-endif
-
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nightsense/snow'
-Plug 'dgraham/xcode-low-key-vim'
 call plug#end()
 
 filetype plugin indent on
 
+if exists('g:fvim_loaded')
+  set guifont=SF\ Mono:h11
+  FVimCursorSmoothMove v:true
+  FVimUIPopupMenu v:true
+endif
+
+" Terminal config
+augroup neovim_terminal
+  autocmd!
+  " Enter Terminal-mode (insert) automatically
+  autocmd TermOpen * startinsert
+  " Disables number lines on terminal buffers
+  autocmd TermOpen * :setlocal nonumber norelativenumber
+  " allows you to use Ctrl-c on terminal window
+  autocmd TermOpen * nnoremap <buffer> <C-c> i<C-c>
+augroup END
+
 "Todo file
 autocmd BufNewFile,BufRead *.todo set syntax=todo
+
+" Auto import for Go
+autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Auto remove trailing spaces
 autocmd BufWritePre * %s/\s\+$//e
 
+set shell=/usr/bin/fish
 set encoding=UTF-8
 set hidden
 set nobackup
@@ -51,24 +67,19 @@ set mouse=a " enable mouse for all mode
 set cursorline
 set foldmethod=indent
 set foldlevel=99
+set relativenumber
 
 let g:is_posix = 1
 
 set noswapfile
 set nojoinspaces
 set nowrap
-set number
 set ttyfast
 set laststatus=2
 set ttimeout
 set ttimeoutlen=10
 set termguicolors
 set ignorecase
-set relativenumber
-
-" Vim color highlighting
-let g:Hexokinase_highlighters = ['virtual']
-let g:Hexokinase_virtualText = '▩'
 
 " FZF config
 let g:fzf_layout = { 'window': {
@@ -76,7 +87,7 @@ let g:fzf_layout = { 'window': {
       \ 'height': 0.7,
       \ 'highlight': 'Comment',
       \ 'rounded': v:false } }
-let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
+let $FZF_DEFAULT_COMMAND = "rg --files"
 
 " Esearch config
 let g:esearch = {
@@ -97,15 +108,19 @@ let g:coc_status_warning_sign=" "
 map q <Nop>
 inoremap jk <ESC>
 vnoremap <M-/> <Esc>/\%V
-nnoremap <Left> :echoe "Use h"<CR>
-nnoremap <Right> :echoe "Use l"<CR>
-nnoremap <Up> :echoe "Use k"<CR>
-nnoremap <Down> :echoe "Use j"<CR>
 nnoremap <ESC><ESC> :nohlsearch<CR>
+
+" QWERTY mode
 nnoremap L l
 nnoremap H h
 nnoremap l w
 nnoremap h b
+
+" DVORAK mode
+" nnoremap h j
+" nnoremap t k
+" vnoremap h j
+" vnoremap t k
 
 vnoremap p "_dP
 
@@ -118,8 +133,8 @@ inoremap <C-e> <C-o>$
 inoremap <C-a> <C-o>^
 
 " Remap scrolling
-nnoremap <C-k> <C-u>
-nnoremap <C-j> <C-d>
+nnoremap <C-k> 10kzz
+nnoremap <C-j> 10jzz
 
 set background=light
 colo tutti
@@ -237,6 +252,9 @@ nnoremap <Leader>tx :tabclose<CR>
 " Jump window
 nmap <Leader>ww <Plug>(choosewin)
 
+" Open terminal in the bottom split
+map <D-j> :belowright 15split +term<CR>
+
 " Open terminal
 nnoremap <Leader>at :call FloatTerm()<CR>
 " Open tig, yes TIG, A FLOATING TIGGGG!!!!!!
@@ -250,6 +268,8 @@ nnoremap <silent> <c-\> :call esearch#init()<CR>
 
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 nnoremap <silent> \ :Rg<CR>
+nnoremap - <c-o> " backup the C-o key
+nnoremap gb <c-o> " backup the C-o key
 nnoremap <silent> <c-o> :CocList outline<CR>
 
 " Choose win
