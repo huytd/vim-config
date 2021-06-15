@@ -38,4 +38,6 @@
   "rust-analyzer.inlayHints.typeHints": true,
   "rust-analyzer.inlayHints.parameterHints": true,
   "rust-analyzer.diagnostics.enable": true,
+  "rust-analyzer.completion.autoimport.enable": true,
+  "clangd.path": "/home/king/.config/coc/extensions/coc-clangd-data/install/11.0.0/clangd_11.0.0/bin/clangd",
 }

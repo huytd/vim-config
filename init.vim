@@ -1,7 +1,7 @@
 call plug#begin()
 Plug 'tpope/vim-fugitive'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'huytd/vim-quickrun'
+Plug 'thinca/vim-quickrun'
 Plug 'othree/html5.vim'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'pangloss/vim-javascript'
@@ -9,7 +9,6 @@ Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'scrooloose/nerdtree'
-Plug 'itchyny/lightline.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'easymotion/vim-easymotion'
 Plug 'unkiwii/vim-nerdtree-sync'
@@ -20,23 +19,34 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'tpope/vim-abolish' " For case perserved subtitue :%S
 Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-multiple-cursors'
-Plug 'eugen0329/vim-esearch'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 't9md/vim-choosewin'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nightsense/snow'
+Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+Plug 'honza/vim-snippets'
+Plug 'jparise/vim-graphql'
+Plug 'ferrine/md-img-paste.vim'
+Plug 'Softmotions/vim-dark-frost-theme'
 call plug#end()
 
 filetype plugin indent on
 
-if exists('g:fvim_loaded')
-  set guifont=SF\ Mono:h11
-  FVimCursorSmoothMove v:true
-  FVimUIPopupMenu v:true
-endif
+au BufNewFile,BufRead *.prisma setfiletype graphql
+
+set guifont=SF\ Mono:h10.5
+
+let g:Hexokinase_highlighters = [ 'virtual' ]
+let g:Hexokinase_optInPatterns = [
+\     'full_hex',
+\     'triple_hex',
+\     'rgb',
+\     'rgba',
+\     'hsl',
+\     'hsla'
+\ ]
 
 " Terminal config
 augroup neovim_terminal
@@ -49,14 +59,16 @@ augroup neovim_terminal
   autocmd TermOpen * nnoremap <buffer> <C-c> i<C-c>
 augroup END
 
-"Todo file
-autocmd BufNewFile,BufRead *.todo set syntax=todo
-
 " Auto import for Go
 autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Auto remove trailing spaces
 autocmd BufWritePre * %s/\s\+$//e
+
+" Paste image in markdown
+autocmd FileType markdown nmap <buffer><silent> <leader>pp :call mdip#MarkdownClipboardImage()<CR>
+let g:mdip_imgdir = 'img'
+let g:mdip_imgname = 'pasted-image'
 
 set shell=/usr/bin/fish
 set encoding=UTF-8
@@ -64,11 +76,12 @@ set hidden
 set nobackup
 set nowritebackup
 set mouse=a " enable mouse for all mode
-set cursorline
+set nocursorline
 set foldmethod=indent
 set foldlevel=99
-set relativenumber
-
+set number relativenumber
+set fillchars=vert:\│
+let &fcs='eob: '
 let g:is_posix = 1
 
 set noswapfile
@@ -89,18 +102,11 @@ let g:fzf_layout = { 'window': {
       \ 'rounded': v:false } }
 let $FZF_DEFAULT_COMMAND = "rg --files"
 
-" Esearch config
-let g:esearch = {
-  \ 'adapter': 'rg',
-  \ 'backend': 'nvim'
-  \}
-call esearch#out#win#map('<Enter>', 'tab')
-
 " JS config
 let g:javascript_plugin_jsdoc = 1
 let g:vim_jsx_pretty_template_tags = ['html', 'jsx', 'tsx']
 
-" Custom icon for coc.nvim statusline
+" Custom icon for coc.nvim
 let g:coc_status_error_sign=" "
 let g:coc_status_warning_sign=" "
 
@@ -136,15 +142,9 @@ inoremap <C-a> <C-o>^
 nnoremap <C-k> 10kzz
 nnoremap <C-j> 10jzz
 
-set background=light
-colo tutti
-
 if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
   syntax on
 endif
-
-set listchars=tab:>·,trail:~,extends:>,precedes:<
-set list
 
 set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
@@ -235,7 +235,7 @@ nnoremap <Leader>wl :wincmd l<CR>
 nnoremap <Leader>wk :wincmd k<CR>
 nnoremap <Leader>wj :wincmd j<CR>
 nnoremap <Leader>w= :wincmd =<CR>
-nnoremap <Leader>e :QuickRunExecute<CR>
+nnoremap <Leader>e :QuickRun<CR>
 nnoremap <Leader>wb :e#<CR>
 nnoremap <Leader>qq :bd<CR>
 nnoremap <Leader>qk :call DeleteCurrentFileAndBuffer()<CR>
@@ -253,12 +253,13 @@ nnoremap <Leader>tx :tabclose<CR>
 nmap <Leader>ww <Plug>(choosewin)
 
 " Open terminal in the bottom split
-map <D-j> :belowright 15split +term<CR>
+"map <Leader>j :belowright 10split +term<CR>
+map <D-j> :belowright 10split +term<CR>
 
 " Open terminal
-nnoremap <Leader>at :call FloatTerm()<CR>
-" Open tig, yes TIG, A FLOATING TIGGGG!!!!!!
-nnoremap <Leader>ag :call FloatTerm('"tig"')<CR>
+nnoremap <Leader>at :tabnew +term<CR>
+" Floating terminal
+nnoremap <Leader>ag :call FloatTerm()<CR>
 
 nnoremap <silent> <Leader>pf :Files<CR>
 nnoremap <silent> <Leader>pt :Buffers<CR>
@@ -286,7 +287,7 @@ set diffopt+=vertical
 nnoremap <Leader>1 :diffget 1<CR>:diffupdate<CR>
 nnoremap <Leader>2 :diffget 2<CR>:diffupdate<CR>
 
-set clipboard=unnamed
+set clipboard=unnamedplus
 
 function! DeleteCurrentFileAndBuffer()
   call delete(expand('%'))
@@ -302,7 +303,7 @@ function! MyFiletype()
   return winwidth(0) > 70 ? (strlen(&filetype) ? WebDevIconsGetFileTypeSymbol() : '') : ''
 endfunction
 
-function! LightLineFilename()
+function! ShortenFileName()
   let name = ""
   let subs = split(expand('%'), "/")
   let i = 1
@@ -321,30 +322,21 @@ function! LightLineFilename()
   return name
 endfunction
 
-let g:lightline = {
-      \ 'colorscheme': 'snow_light',
-      \ 'active': {
-      \   'left': [ [], ['filetype', 'filename' ] ],
-      \   'right': [ [], ['cocstatus', 'lineinfo', 'icongitbranch'] ]
-      \ },
-      \ 'inactive': {
-      \   'left': [ [], [ 'filetype', 'filename' ] ],
-      \   'right': []
-      \ },
-      \ 'component': { 'lineinfo': ' %2p%% %3l:%-2v' },
-      \ 'component_function': {
-      \   'filetype': 'MyFiletype',
-      \   'icongitbranch': 'DrawGitBranchInfo',
-      \   'iconline': 'DrawLineInfo',
-      \   'gitbranch': 'fugitive#head',
-      \   'cocstatus': 'coc#status',
-      \   'filename': 'LightLineFilename',
-      \ },
-      \ 'subseparator': { 'left': '', 'right': '' }
-      \ }
+function! GetProjectName()
+  let name = finddir('.git/..', expand('%:p:h').';')
+  let subs = split(name, "/")
+  return " " . subs[-1]
+endfunction
 
-" Use auocmd to force lightline update.
-autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
+" Add status line support, for integration with other plugin, checkout `:h coc-status`
+set statusline=%#NonText#%{MyFiletype()}\ %{ShortenFileName()}
+set statusline+=%=
+set statusline+=\ %{coc#status()}
+set statusline+=\ %l:%c\ %{DrawGitBranchInfo()}\ %{GetProjectName()}
+
+set background=dark
+colo github-dark
+" colo darkfrost
 
 set shortmess+=c
 set signcolumn=yes
@@ -419,22 +411,6 @@ nmap <leader>ar  <Plug>(coc-rename)
 " Fix autofix problem of current line
 nmap <leader>qf  <Plug>(coc-fix-current)
 
-function! StatusDiagnostic() abort
-  let info = get(b:, 'coc_diagnostic_info', {})
-  if empty(info) | return '' | endif
-  let msgs = []
-  if get(info, 'error', 0)
-    call add(msgs, 'E' . info['error'])
-  endif
-  if get(info, 'warning', 0)
-    call add(msgs, 'W' . info['warning'])
-  endif
-  return join(msgs, ' ') . ' ' . get(g:, 'coc_status', '')
-endfunction
-
-" Add status line support, for integration with other plugin, checkout `:h coc-status`
-set statusline^=%{coc#status()}%{StatusDiagnostic()}
-
 " Nerdtree Sync
 let g:nerdtree_sync_cursorline = 1
 let g:NERDTreeHighlightCursorline = 1
@@ -455,20 +431,18 @@ let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 " Some custom style
-" highlight Normal guibg=NONE
-" highlight SignColumn guibg=NONE
-" highlight VertSplit guibg=NONE
-" highlight EasyMotionTargetDefault guifg=#ffb400
-" highlight WildMenu guifg=#87bb7c
-" highlight CocInfoSign guifg=#97afbb
-" highlight LineNr guifg=#e8e8e8 guibg=NONE
-" highlight DiffAdd guibg=NONE
-" highlight DiffAdded guibg=NONE
-" highlight DiffChange guibg=NONE
-" highlight DiffDelete guibg=NONE
-" highlight EndOfBuffer guifg=#282c34
-" highlight CocRustChainingHint guifg=#456182
+if !exists('g:gonvim_running')
+  highlight Normal guibg=NONE
+endif
+highlight SignColumn guibg=NONE
+highlight VertSplit guibg=NONE
+highlight LineNr guibg=NONE
+highlight EndOfBuffer ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
+highlight NonText guifg=#676E95 guibg=NONE
+highlight MatchParen guibg=#b392f0 guifg=#555555 gui=reverse
 
 if !has("gui_vimr")
   luafile $HOME/.config/nvim/treesitter.lua
 endif
+
+let g:gonvim_draw_lint = 1
