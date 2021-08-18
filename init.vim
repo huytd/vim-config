@@ -262,6 +262,7 @@ let g:choosewin_overlay_enable = 1
 
 " NERDTree config
 let NERDTreeMinimalUI=1
+let g:NERDTreeStatusline = '%#NonText#'
 
 " Turn off whitespaces compare and folding in vimdiff
 set splitright
