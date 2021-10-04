@@ -82,6 +82,8 @@ set completeopt=menu,menuone,noselect
 
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_winsize = 25
 
 let bufferline = get(g:, 'bufferline', {})
 let bufferline.icon_close_tab = '×'
@@ -218,7 +220,7 @@ nnoremap <Leader>c :close<CR>
 nnoremap <Leader>ss :mksession! .vimsession<CR>
 nnoremap <Leader>sr :so .vimsession<CR>
 nnoremap <Leader><Leader>r :so ~/.config/nvim/init.vim<CR>
-nnoremap <Leader>n :Sexplore<CR>
+nnoremap <Leader>n :Vex!<CR>
 "Buffer
 nnoremap <Leader>tn :BufferNext<CR>
 nnoremap <Leader>tp :BufferPrevious<CR>
