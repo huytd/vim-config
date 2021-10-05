@@ -6,7 +6,6 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'terryma/vim-expand-region'
-Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 " LUA ZONE
 Plug 'andymass/vim-matchup'
 Plug 'lukas-reineke/indent-blankline.nvim'
