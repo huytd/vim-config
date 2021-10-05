@@ -364,8 +364,8 @@ highlight NonText guifg=#677574 guibg=NONE
 highlight LspDiagnosticsDefaultHint guifg=#677674
 highlight IndentBlanklineChar guifg=#3a4242
 highlight NvimTreeIndentMarker guifg=#3a4242
-highlight FloatBorder guibg=#22272e guifg=#FFFFFF
-highlight NormalFloat guibg=#22272e
+highlight FloatBorder guibg=#222d2e guifg=#FFFFFF
+highlight NormalFloat guibg=#222d2e
 highlight BufferTabpageFill guibg=#181e24
 highlight LspDiagnosticsUnderlineError cterm=undercurl gui=undercurl
 highlight LspDiagnosticsUnderlineHint cterm=undercurl gui=undercurl
