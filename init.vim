@@ -542,9 +542,18 @@ require('nvim_comment').setup()
 require("surround").setup{}
 
 -- autopairs
-require('nvim-autopairs').setup{
+require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt", "vim", "html" }
-}
+})
+require('nvim-autopairs.completion.cmp').setup({
+  map_cr = true,
+  map_complete = true,
+  auto_select = true,
+  map_char = {
+    all = '(',
+    tex = '{'
+  }
+})
 
 -- gitsigns
 require('gitsigns').setup{}
