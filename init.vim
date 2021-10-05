@@ -35,6 +35,15 @@ call plug#end()
 
 filetype plugin indent on
 
+" Neovide Config
+augroup neovide_gui
+  set guifont=Iosevka\ Nerd\ Font:h15
+  let g:neovide_cursor_animation_length=0.1
+  let g:neovide_cursor_trail_length=0.1
+  let g:neovide_floating_blur = 0
+  let g:neovide_window_floating_blur = 0
+augroup END
+
 " Terminal config
 augroup neovim_terminal
   autocmd!
@@ -351,11 +360,11 @@ if !(has('gui_vimr'))
 endif
 
 highlight EndOfBuffer ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
-highlight NonText guifg=#676E95 guibg=NONE
+highlight NonText guifg=#677574 guibg=NONE
 " highlight MatchParen guibg=#333a45 gui=NONE
-highlight LspDiagnosticsDefaultHint guifg=#676E95
-highlight IndentBlanklineChar guifg=#333a45
-highlight NvimTreeIndentMarker guifg=#333a45
+highlight LspDiagnosticsDefaultHint guifg=#677674
+highlight IndentBlanklineChar guifg=#3a4242
+highlight NvimTreeIndentMarker guifg=#3a4242
 highlight FloatBorder guibg=#22272e guifg=#FFFFFF
 highlight NormalFloat guibg=#22272e
 highlight BufferTabpageFill guibg=#181e24

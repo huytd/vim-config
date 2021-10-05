@@ -15,9 +15,9 @@ let g:lemontree_dark_italics = get(g:, 'lemontree_dark_italics', 0)
 
 " Color Palette
 let s:gray1     = '#22272e'
-let s:gray2     = '#2a3139'
-let s:gray3     = '#333a45'
-let s:gray4     = '#546072'
+let s:gray2     = '#2c3333'
+let s:gray3     = '#3a4242'
+let s:gray4     = '#677574'
 let s:gray5     = '#ceecea'
 
 " Lemontree Dark
