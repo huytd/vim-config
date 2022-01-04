@@ -17,12 +17,15 @@ Plug 'windwp/nvim-autopairs'
 Plug 'terrortylor/nvim-comment'
 Plug 'blackCauldron7/surround.nvim'
 Plug 'lewis6991/gitsigns.nvim'
+Plug 'ziglang/zig.vim'
 " Nvim LSP gang
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'scalameta/nvim-metals'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/nvim-treesitter-angular'
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'neovim/nvim-lspconfig'
-Plug 'kabouzeid/nvim-lspinstall'
+Plug 'williamboman/nvim-lsp-installer'
 Plug 'simrat39/rust-tools.nvim'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -96,16 +99,30 @@ let g:netrw_winsize = 25
 let bufferline = get(g:, 'bufferline', {})
 let bufferline.icon_close_tab = '×'
 
+let g:go_fmt_fail_silently = 1
+let g:go_fmt_command = "gopls"
+let g:go_rename_command = "gopls"
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
+let g:go_auto_sameids = 0
+let g:go_build_tags = ""
+let g:go_fillstruct_mode = 'gopls'
+
 inoremap jk <ESC>
 vnoremap <M-/> <Esc>/\%V
 nnoremap <ESC><ESC> :nohlsearch<CR>
 nnoremap <C-g><C-g> :nohlsearch<CR>
 
+nnoremap Q <NOP>
+
+nnoremap 0 ^
+nnoremap ^ 0
+
 " QWERTY mode
-nnoremap L l
-nnoremap H h
-nnoremap l w
-nnoremap h b
+" nnoremap L l
+" nnoremap H h
+" nnoremap l w
+" nnoremap h b
 
 " DVORAK mode
 " nnoremap h j
@@ -224,7 +241,7 @@ nnoremap <Leader>w= :wincmd =<CR>
 nnoremap <Leader>e :QuickRun<CR>
 nnoremap <Leader>wb :e#<CR>
 nnoremap <Leader>q :bd<CR>
-nnoremap <Leader>c :close<CR>
+nnoremap <Leader>c :bd!<CR>
 nnoremap <Leader>ss :mksession! .vimsession<CR>
 nnoremap <Leader>sr :so .vimsession<CR>
 nnoremap <Leader><Leader>r :so ~/.config/nvim/init.vim<CR>
@@ -376,7 +393,6 @@ highlight LspDiagnosticsUnderlineInformation cterm=undercurl gui=undercurl
 lua << EOF
 
 local nvim_lsp = require('lspconfig')
-require'lspinstall'.setup()
 
 -- LSP Status
 local lsp_status = require('lsp-status')
@@ -415,6 +431,17 @@ local on_attach = function(client, bufnr)
 
   lsp_status.on_attach(client, bufnr)
 end
+
+local lsp_installer = require'nvim-lsp-installer'
+lsp_installer.on_server_ready(function(server)
+  local caps = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  caps = vim.tbl_deep_extend('keep', caps, lsp_status.capabilities)
+  local opts = {
+    on_attach = on_attach,
+    capabilities = caps
+  }
+  server:setup(opts)
+end)
 
 -- Setup nvim-cmp.
   local cmp = require'cmp'
@@ -456,19 +483,6 @@ end
     }
   })
 
--- Check here for list of available language servers
--- https://github.com/kabouzeid/nvim-lspinstall#bundled-installers
--- Need to manually run :LspInstall <language>
-local servers = require'lspinstall'.installed_servers()
-local caps = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-caps = vim.tbl_deep_extend('keep', caps, lsp_status.capabilities)
-for _, server in pairs(servers) do
-  require'lspconfig'[server].setup{
-    on_attach = on_attach,
-    capabilities = caps
-  }
-end
-
 -- Treesitter
 
 require'nvim-treesitter.configs'.setup {
@@ -492,7 +506,8 @@ require'nvim-treesitter.configs'.setup {
     "json",
     "yaml",
     "html",
-    "scss"
+    "scss",
+    "go"
   },
 }
 
@@ -567,6 +582,11 @@ require('nvim-autopairs.completion.cmp').setup({
 require('gitsigns').setup{}
 
 EOF
+
+augroup lsp
+  au!
+  au FileType scala,sbt lua require("metals").initialize_or_attach({})
+augroup end
 
 nnoremap <silent> ga <cmd>lua require('telescope.builtin').lsp_code_actions(require('telescope.themes').get_cursor())<CR>
 vnoremap <silent> ga :<C-U><cmd>lua require('telescope.builtin').lsp_range_code_actions(require('telescope.themes').get_cursor())<CR>
