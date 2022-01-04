@@ -416,6 +416,26 @@ local border = {
   {"│", "FloatBorder"},
 }
 
+function PrintDiagnostics(opts, bufnr, line_nr, client_id)
+  opts = opts or {}
+
+  bufnr = bufnr or 0
+  line_nr = line_nr or (vim.api.nvim_win_get_cursor(0)[1] - 1)
+
+  local line_diagnostics = vim.lsp.diagnostic.get_line_diagnostics(bufnr, line_nr, opts, client_id)
+  if vim.tbl_isempty(line_diagnostics) then return end
+
+  local diagnostic_message = ""
+  for i, diagnostic in ipairs(line_diagnostics) do
+    diagnostic_message = diagnostic_message .. string.format("%d: %s", i, diagnostic.message or "")
+    if i ~= #line_diagnostics then
+      diagnostic_message = diagnostic_message .. "\n"
+    end
+  end
+  --print only shows a single line, echo blocks requiring enter, pick your poison
+  print(diagnostic_message)
+end
+
 local on_attach = function(client, bufnr)
   vim.lsp.handlers["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = border})
   vim.lsp.handlers["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.signature_help, {border = border})
@@ -427,7 +447,7 @@ local on_attach = function(client, bufnr)
   end
 
   vim.o.updatetime = 250
-  vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.lsp.diagnostic.show_line_diagnostics({focusable=false, border = 'single'})]]
+  vim.cmd [[ autocmd CursorHold,CursorHoldI * lua PrintDiagnostics() ]]
 
   lsp_status.on_attach(client, bufnr)
 end
@@ -567,15 +587,6 @@ require("surround").setup{}
 -- autopairs
 require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt", "vim", "html" }
-})
-require('nvim-autopairs.completion.cmp').setup({
-  map_cr = true,
-  map_complete = true,
-  auto_select = true,
-  map_char = {
-    all = '(',
-    tex = '{'
-  }
 })
 
 -- gitsigns
