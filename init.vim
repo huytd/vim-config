@@ -2,6 +2,7 @@ call plug#begin()
 Plug 'tpope/vim-fugitive'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'thinca/vim-quickrun'
+Plug 'vim-test/vim-test'
 Plug 'haya14busa/incsearch.vim'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'peitalin/vim-jsx-typescript'
@@ -242,8 +243,6 @@ nnoremap <Leader>sr :so .vimsession<CR>
 nnoremap <Leader><Leader>r :so ~/.config/nvim/init.vim<CR>
 nnoremap <Leader>n :Vex!<CR>
 "Buffer
-nnoremap <Leader>tn :BufferNext<CR>
-nnoremap <Leader>tp :BufferPrevious<CR>
 nnoremap <Leader>1 :BufferGoto 1<CR>
 nnoremap <Leader>2 :BufferGoto 2<CR>
 nnoremap <Leader>3 :BufferGoto 3<CR>
@@ -253,6 +252,9 @@ nnoremap <Leader>6 :BufferGoto 6<CR>
 nnoremap <Leader>7 :BufferGoto 7<CR>
 nnoremap <Leader>8 :BufferGoto 8<CR>
 nnoremap <Leader>9 :BufferLast<CR>
+" Test
+nnoremap <leader>t :TestNearest<CR>
+nnoremap <leader>T :TestFile<CR>
 
 nnoremap - <c-o> " backup the C-o key
 
