@@ -19,8 +19,7 @@ Plug 'blackCauldron7/surround.nvim'
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'ziglang/zig.vim'
 " Nvim LSP gang
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-Plug 'scalameta/nvim-metals'
+Plug 'ray-x/go.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/nvim-treesitter-angular'
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
@@ -32,6 +31,7 @@ Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
 Plug 'nvim-lua/lsp-status.nvim'
 call plug#end()
 
@@ -62,6 +62,7 @@ augroup END
 
 " Auto remove trailing spaces
 autocmd BufWritePre * %s/\s\+$//e
+autocmd BufWritePre *.go :silent! lua require('go.format').gofmt()
 
 " Rebind C command to close
 command -nargs=0 C :close
@@ -98,15 +99,6 @@ let g:netrw_winsize = 25
 
 let bufferline = get(g:, 'bufferline', {})
 let bufferline.icon_close_tab = '×'
-
-let g:go_fmt_fail_silently = 1
-let g:go_fmt_command = "gopls"
-let g:go_rename_command = "gopls"
-let g:go_def_mode='gopls'
-let g:go_info_mode='gopls'
-let g:go_auto_sameids = 0
-let g:go_build_tags = ""
-let g:go_fillstruct_mode = 'gopls'
 
 inoremap jk <ESC>
 vnoremap <M-/> <Esc>/\%V
@@ -153,9 +145,9 @@ endif
 set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
 
-set tabstop=2
-set softtabstop=2
-set shiftwidth=2
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
 set shiftround
 set expandtab
 
@@ -228,6 +220,9 @@ function! FloatTerm(...)
   " Close border window when terminal window close
   autocmd TermClose * ++once :bd! | call nvim_win_close(s:float_term_border_win, v:true)
 endfunction
+
+let g:quickrun_config = {}
+let g:quickrun_config.go = { 'command': 'go', 'exec': '%c run *.go' }
 
 " Key binding
 let mapleader=" "
@@ -343,7 +338,8 @@ fun! s:disable_statusline(bn)
 endfunction
 
 
-color lemontree-dark
+" color lemontree-dark
+color hiccup
 
 set shortmess+=c
 set signcolumn=yes
@@ -488,17 +484,8 @@ end)
       ['<Tab>'] = cmp.mapping.select_next_item(),
     },
     sources = {
-      { name = 'nvim_lsp' },
-
-      -- For vsnip user.
       { name = 'vsnip' },
-
-      -- For luasnip user.
-      -- { name = 'luasnip' },
-
-      -- For ultisnips user.
-      -- { name = 'ultisnips' },
-
+      { name = 'nvim_lsp' },
       { name = 'buffer' },
     }
   })
@@ -592,12 +579,10 @@ require('nvim-autopairs').setup({
 -- gitsigns
 require('gitsigns').setup{}
 
-EOF
+-- go
+require('go').setup()
 
-augroup lsp
-  au!
-  au FileType scala,sbt lua require("metals").initialize_or_attach({})
-augroup end
+EOF
 
 nnoremap <silent> ga <cmd>lua require('telescope.builtin').lsp_code_actions(require('telescope.themes').get_cursor())<CR>
 vnoremap <silent> ga :<C-U><cmd>lua require('telescope.builtin').lsp_range_code_actions(require('telescope.themes').get_cursor())<CR>
