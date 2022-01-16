@@ -372,11 +372,11 @@ if !(has('gui_vimr'))
 endif
 
 highlight EndOfBuffer ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
-highlight NonText guifg=#677574 guibg=NONE
+" highlight NonText guifg=#677574 guibg=NONE
 " highlight MatchParen guibg=#333a45 gui=NONE
 highlight LspDiagnosticsDefaultHint guifg=#677674
-highlight IndentBlanklineChar guifg=#3a4242
-highlight NvimTreeIndentMarker guifg=#3a4242
+highlight IndentBlanklineChar guifg=#333a45
+highlight NvimTreeIndentMarker guifg=#333a45
 highlight FloatBorder guibg=#222d2e guifg=#FFFFFF
 highlight NormalFloat guibg=#222d2e
 highlight BufferTabpageFill guibg=#181e24
