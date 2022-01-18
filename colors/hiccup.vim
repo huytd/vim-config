@@ -43,6 +43,9 @@ function! s:HL(group, fg, bg, attr)
     endif
 endfun
 
+call s:HL('Bold', '', '', 'bold')
+call s:HL('Italic', '', '', 'italic')
+
 " Vim Editor
 call s:HL('ColorColumn',                    '',         s:gray2,    '')
 call s:HL('Cursor',                         s:gray2,    s:gray5,    '')
@@ -87,6 +90,13 @@ call s:HL('WildMenu',                       s:gray2,    s:cyan,	    '')
 call s:HL('EndOfBuffer',                    s:gray3,    s:gray1,    'none')
 
 " Standard Syntax
+call s:HL('Boolean',                        s:orange,   '',         '')
+call s:HL('Delimiter',                      s:indigo,   '',         '')
+call s:HL('Float',                          s:cyan,   '',         '')
+call s:HL('Number',                         s:cyan,   '',         '')
+call s:HL('Keyword',                        s:blue,   '',         '')
+call s:HL('StorageClass',                   s:blue,   '',         '')
+call s:HL('Tag',                            s:orange,   '',         '')
 call s:HL('Comment',                        s:gray4,    '',         'italic')
 call s:HL('Constant',                       s:purple,   '',         '')
 call s:HL('String',                         s:green,    '',         '')
@@ -98,13 +108,15 @@ call s:HL('Operator',                       s:red,     '',         '')
 call s:HL('PreProc',                        s:cyan,     '',         '')
 call s:HL('Include',                        s:blue,     '',         '')
 call s:HL('Define',                         s:blue,   '',         'none')
-call s:HL('Macro',                          s:blue,   '',         '')
 call s:HL('Type',                           s:purple,   '',         'none')
+call s:HL('Typedef',                           s:purple,   '',         'none')
 call s:HL('Structure',                      s:purple,     '',         '')
 call s:HL('Special',                        s:indigo,   '',         '')
 call s:HL('Underlined',                     s:blue,     '',         'none')
 call s:HL('Error',                          s:error,      s:gray1,    'bold')
 call s:HL('Todo',                           s:orange,   s:gray1,    'bold')
+hi! link Macro Define
+hi! link PreCondit PreProc
 
 " CSS
 call s:HL('cssAttrComma',                   s:gray5,    '',         '')
@@ -235,6 +247,38 @@ call s:HL('xmlAttrib',                      s:yellow,   '',         '')
 call s:HL('xmlEndTag',                      s:blue,     '',         '')
 call s:HL('xmlTag',                         s:blue,     '',         '')
 call s:HL('xmlTagName',                     s:blue,     '',         '')
+
+hi! link awkArrayElement Identifier
+hi! link awkBoolLogic Keyword
+hi! link awkBrktRegExp SpecialChar
+hi! link awkComma Delimiter
+hi! link awkExpression Keyword
+hi! link awkFieldVars Identifier
+hi! link awkLineSkip Keyword
+hi! link awkOperator Operator
+hi! link awkRegExp SpecialChar
+hi! link awkSearch Keyword
+hi! link awkSemicolon Delimiter
+hi! link awkSpecialCharacter SpecialChar
+hi! link awkSpecialPrintf SpecialChar
+hi! link awkVariables Identifier
+
+hi! link cOperator Operator
+hi! link cPreCondit PreCondit
+
+hi! link csPreCondit PreCondit
+hi! link csType Type
+hi! link csXmlTag SpecialComment
+
+hi! link cssAttr Keyword
+hi! link cssBraces Delimiter
+hi! link cssClassName cssDefinition
+hi! link cssColor Number
+hi! link cssProp cssDefinition
+hi! link cssPseudoClass cssDefinition
+hi! link cssPseudoClassId cssPseudoClass
+hi! link cssVendor Keyword
+
 
 " Neovim terminal colors
 if has('nvim')
