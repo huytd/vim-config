@@ -19,12 +19,13 @@ let s:gray4     = '#546072'
 let s:gray5     = '#e0e2e4'
 
 " Github Dark
+let s:error     = '#d98285'
 let s:red       = '#d98285'
 let s:green     = '#85e89d'
 let s:yellow    = '#ffab70'
 let s:blue      = '#92b9f0'
 let s:purple    = '#8acfbb'
-let s:cyan      = '#9ecbff'
+let s:cyan      = '#73daca'
 let s:orange    = '#ffab70'
 let s:indigo    = '#e1e4e8'
 
@@ -51,9 +52,9 @@ call s:HL('CursorLineNr',                   s:cyan,     s:gray2,    'none')
 call s:HL('Directory',                      s:blue,     '',         '')
 call s:HL('DiffAdd',                        s:green,    s:gray2,    'none')
 call s:HL('DiffChange',                     s:yellow,   s:gray2,    'none')
-call s:HL('DiffDelete',                     s:red,      s:gray2,    'none')
+call s:HL('DiffDelete',                     s:error,      s:gray2,    'none')
 call s:HL('DiffText',                       s:blue,     s:gray2,    'none')
-call s:HL('ErrorMsg',                       s:red,      s:gray1,    'bold')
+call s:HL('ErrorMsg',                       s:error,      s:gray1,    'bold')
 call s:HL('FoldColumn',                     s:gray4,    s:gray1,    '')
 call s:HL('Folded',                         s:gray3,    s:gray1,    '')
 call s:HL('IncSearch',                      s:yellow,   '',         '')
@@ -72,7 +73,7 @@ call s:HL('Search',                         s:gray1,    s:yellow,   '')
 call s:HL('SignColumn',                     s:gray5,    s:gray1,    '')
 call s:HL('SpecialKey',                     s:gray4,    '',         '')
 call s:HL('SpellCap',                       s:blue,     s:gray2,    'undercurl')
-call s:HL('SpellBad',                       s:red,      s:gray2,    'undercurl')
+call s:HL('SpellBad',                       s:error,      s:gray2,    'undercurl')
 call s:HL('StatusLine',                     s:gray4,    s:gray3,    'none')
 call s:HL('StatusLineNC',                   s:gray2,    s:gray4,    '')
 call s:HL('TabLine',                        s:gray4,    s:gray2,    'none')
@@ -81,7 +82,7 @@ call s:HL('TabLineSel',                     s:yellow,   s:gray3,    'none')
 call s:HL('Title',                          s:green,    '',         'none')
 call s:HL('VertSplit',                      s:gray3,    s:gray1,    'none')
 call s:HL('Visual',                         s:gray5,    s:gray3,    '')
-call s:HL('WarningMsg',                     s:red,      '',         '')
+call s:HL('WarningMsg',                     s:error,      '',         '')
 call s:HL('WildMenu',                       s:gray2,    s:cyan,	    '')
 call s:HL('EndOfBuffer',                    s:gray3,    s:gray1,    'none')
 
@@ -90,19 +91,19 @@ call s:HL('Comment',                        s:gray4,    '',         'italic')
 call s:HL('Constant',                       s:purple,   '',         '')
 call s:HL('String',                         s:green,    '',         '')
 call s:HL('Character',                      s:green,    '',         '')
-call s:HL('Identifier',                     s:red,      '',         'none')
+call s:HL('Identifier',                     s:purple,      '',         'none')
 call s:HL('Function',                       s:indigo,     '',         '')
 call s:HL('Statement',                      s:blue,   '',         'none')
-call s:HL('Operator',                       s:orange,     '',         '')
+call s:HL('Operator',                       s:red,     '',         '')
 call s:HL('PreProc',                        s:cyan,     '',         '')
 call s:HL('Include',                        s:blue,     '',         '')
 call s:HL('Define',                         s:blue,   '',         'none')
 call s:HL('Macro',                          s:blue,   '',         '')
 call s:HL('Type',                           s:purple,   '',         'none')
-call s:HL('Structure',                      s:cyan,     '',         '')
+call s:HL('Structure',                      s:purple,     '',         '')
 call s:HL('Special',                        s:indigo,   '',         '')
 call s:HL('Underlined',                     s:blue,     '',         'none')
-call s:HL('Error',                          s:red,      s:gray1,    'bold')
+call s:HL('Error',                          s:error,      s:gray1,    'bold')
 call s:HL('Todo',                           s:orange,   s:gray1,    'bold')
 
 " CSS
@@ -124,11 +125,11 @@ call s:HL('cssSelectorOp2',                 s:cyan,     '',         '')
 call s:HL('gitcommitHeader',                s:purple,   '',         '')
 call s:HL('gitcommitUnmerged',              s:green,    '',         '')
 call s:HL('gitcommitSelectedFile',          s:green,    '',         '')
-call s:HL('gitcommitDiscardedFile',         s:red,      '',         '')
+call s:HL('gitcommitDiscardedFile',         s:error,      '',         '')
 call s:HL('gitcommitUnmergedFile',          s:yellow,   '',         '')
 call s:HL('gitcommitSelectedType',          s:green,    '',         '')
 call s:HL('gitcommitSummary',               s:blue,     '',         '')
-call s:HL('gitcommitDiscardedType',         s:red,      '',         '')
+call s:HL('gitcommitDiscardedType',         s:error,      '',         '')
 hi link gitcommitNoBranch       gitcommitBranch
 hi link gitcommitUntracked      gitcommitComment
 hi link gitcommitDiscarded      gitcommitComment
@@ -216,13 +217,13 @@ call s:HL('sassVariable',                   s:purple,   '',         '')
 
 " Vim-Fugitive
 call s:HL('diffAdded',                      s:green,    '',         '')
-call s:HL('diffRemoved',                    s:red,      '',         '')
+call s:HL('diffRemoved',                    s:error,      '',         '')
 
 " Vim-Gittgutter
 call s:HL('GitGutterAdd',                   s:green,    '',         '')
 call s:HL('GitGutterChange',                s:yellow,   '',         '')
 call s:HL('GitGutterChangeDelete',          s:orange,   '',         '')
-call s:HL('GitGutterDelete',                s:red,      '',         '')
+call s:HL('GitGutterDelete',                s:error,      '',         '')
 
 " Vim-Signify
 hi link SignifySignAdd GitGutterAdd
