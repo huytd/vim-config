@@ -12,11 +12,13 @@ set background=dark
 let g:colors_name = 'hiccup'
 
 " Color Palette
+let s:foreground = '#b7c5d3'
+
 let s:gray1     = '#20242e'
 let s:gray2     = '#2a3139'
 let s:gray3     = '#333a45'
 let s:gray4     = '#546072'
-let s:gray5     = '#e0e2e4'
+let s:gray5     = '#d8e2ec'
 
 " Github Dark
 let s:error     = '#d98285'
@@ -48,7 +50,7 @@ call s:HL('Italic', '', '', 'italic')
 
 " Vim Editor
 call s:HL('ColorColumn',                    '',         s:gray2,    '')
-call s:HL('Cursor',                         s:gray2,    s:gray5,    '')
+call s:HL('Cursor',                         s:gray2,    s:foreground,    '')
 call s:HL('CursorColumn',                   '',         s:gray2,    '')
 call s:HL('CursorLine',                     '',         s:gray2,    'none')
 call s:HL('CursorLineNr',                   s:cyan,     s:gray2,    'none')
@@ -66,14 +68,14 @@ call s:HL('MatchParen',                     s:gray4,    s:cyan,     'bold')
 call s:HL('ModeMsg',                        s:green,    '',         '')
 call s:HL('MoreMsg',                        s:green,    '',         '')
 call s:HL('NonText',                        s:gray4,    s:gray1,    'none')
-call s:HL('Normal',                         s:gray5,    s:gray1,    'none')
-call s:HL('Pmenu',                          s:gray5,    s:gray3,    '')
+call s:HL('Normal',                         s:foreground,    s:gray1,    'none')
+call s:HL('Pmenu',                          s:foreground,    s:gray3,    '')
 call s:HL('PmenuSbar',                      '',         s:gray2,    '')
 call s:HL('PmenuSel',                       s:gray2,    s:cyan,     '')
 call s:HL('PmenuThumb',                     '',         s:gray4,    '')
 call s:HL('Question',                       s:blue,     '',         'none')
 call s:HL('Search',                         s:gray1,    s:yellow,   '')
-call s:HL('SignColumn',                     s:gray5,    s:gray1,    '')
+call s:HL('SignColumn',                     s:foreground,    s:gray1,    '')
 call s:HL('SpecialKey',                     s:gray4,    '',         '')
 call s:HL('SpellCap',                       s:blue,     s:gray2,    'undercurl')
 call s:HL('SpellBad',                       s:error,      s:gray2,    'undercurl')
@@ -84,7 +86,7 @@ call s:HL('TabLineFill',                    s:gray4,    s:gray2,    'none')
 call s:HL('TabLineSel',                     s:yellow,   s:gray3,    'none')
 call s:HL('Title',                          s:green,    '',         'none')
 call s:HL('VertSplit',                      s:gray3,    s:gray1,    'none')
-call s:HL('Visual',                         s:gray5,    s:gray3,    '')
+call s:HL('Visual',                         s:foreground,    s:gray3,    '')
 call s:HL('WarningMsg',                     s:error,      '',         '')
 call s:HL('WildMenu',                       s:gray2,    s:cyan,	    '')
 call s:HL('EndOfBuffer',                    s:gray3,    s:gray1,    'none')
@@ -109,7 +111,7 @@ call s:HL('PreProc',                        s:cyan,     '',         '')
 call s:HL('Include',                        s:blue,     '',         '')
 call s:HL('Define',                         s:blue,   '',         'none')
 call s:HL('Type',                           s:purple,   '',         'none')
-call s:HL('Typedef',                           s:purple,   '',         'none')
+call s:HL('Typedef',                        s:purple,   '',         'none')
 call s:HL('Structure',                      s:purple,     '',         '')
 call s:HL('Special',                        s:indigo,   '',         '')
 call s:HL('Underlined',                     s:blue,     '',         'none')

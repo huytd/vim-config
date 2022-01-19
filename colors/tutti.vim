@@ -6,13 +6,13 @@ endif
 
 let g:colors_name = "tutti"
 
-highlight Normal                    guifg=#000000 guibg=#ffffff
-highlight Cursor                    guifg=#000000 guibg=#cccecf
+highlight Normal                    guifg=#2f3336 guibg=#f7fafc
+highlight Cursor                    guifg=#2f3336 guibg=#cccecf
 highlight CursorLine                              guibg=NONE
 highlight Visual                                  guibg=#dbebff
 highlight Search                                  guibg=#fbe9ad
 
-highlight NonText                   guifg=#e2e8ef guibg=#fefeff
+highlight NonText guifg=#adbdc7 guibg=NONE
 highlight MatchParen                              guibg=#d4e9fa
 
 highlight SignColumn                              guibg=NONE
@@ -33,7 +33,7 @@ highlight PreProc                   guifg=#7653c1 guibg=NONE
 highlight Special                   guifg=#2f6f9f guibg=NONE gui=NONE
 highlight Statement                 guifg=#2f6f9f guibg=NONE gui=NONE
 highlight Type                      guifg=#2f6f9f guibg=NONE gui=NONE
-highlight Title                     guifg=#000000 guibg=NONE    gui=NONE
+highlight Title                     guifg=#2f3336 guibg=NONE    gui=NONE
 highlight Underlined                                            gui=underline
 highlight String                    guifg=#73b00a guibg=NONE
 
@@ -48,3 +48,8 @@ highlight CocRustTypeHint           guifg=#a1a1a1
 
 highlight htmlHead                                guibg=NONE
 highlight javaScript                guifg=#434343 guibg=NONE
+
+highlight IndentBlanklineChar       guifg=#d8e2e8
+highlight NvimTreeIndentMarker      guifg=#d8e2e8
+highlight FloatBorder               guifg=#2f3336 guibg=#f7fafc
+highlight NormalFloat               guibg=#f7fafc

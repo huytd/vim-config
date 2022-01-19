@@ -225,6 +225,31 @@ endfunction
 let g:quickrun_config = {}
 let g:quickrun_config.go = { 'command': 'go', 'exec': '%c run *.go' }
 
+" ChangeBackground changes the background mode based on macOS's `Appearance`
+" setting. We also refresh the statusline colors to reflect the new mode.
+function! ChangeBackground()
+  if system("defaults read -g AppleInterfaceStyle") =~ '^Dark'
+    set background=dark   " for the dark version of the theme
+    colorscheme hiccup
+    highlight IndentBlanklineChar guifg=#333a45
+    highlight NvimTreeIndentMarker guifg=#333a45
+    highlight BufferTabpageFill guibg=#181e24
+    highlight LspDiagnosticsDefaultHint guifg=#677674
+    highlight FloatBorder guibg=#222d2e guifg=#FFFFFF
+    highlight NormalFloat guibg=#222d2e
+  else
+    set background=light  " for the light version of the theme
+    colorscheme tutti
+    highlight BufferTabpageFill guibg=#ffffff
+  endif
+  try
+    execute "AirlineRefresh"
+  catch
+  endtry
+endfunction
+" initialize the colorscheme for the first run
+call ChangeBackground()
+
 " Key binding
 let mapleader=" "
 nnoremap <Leader>l :vsplit<CR>
@@ -339,10 +364,6 @@ fun! s:disable_statusline(bn)
    endif
 endfunction
 
-
-" color lemontree-dark
-color hiccup
-
 set shortmess+=c
 set signcolumn=yes
 
@@ -374,14 +395,6 @@ if !(has('gui_vimr'))
 endif
 
 highlight EndOfBuffer ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
-" highlight NonText guifg=#677574 guibg=NONE
-" highlight MatchParen guibg=#333a45 gui=NONE
-highlight LspDiagnosticsDefaultHint guifg=#677674
-highlight IndentBlanklineChar guifg=#333a45
-highlight NvimTreeIndentMarker guifg=#333a45
-highlight FloatBorder guibg=#222d2e guifg=#FFFFFF
-highlight NormalFloat guibg=#222d2e
-highlight BufferTabpageFill guibg=#181e24
 highlight LspDiagnosticsUnderlineError cterm=undercurl gui=undercurl
 highlight LspDiagnosticsUnderlineHint cterm=undercurl gui=undercurl
 highlight LspDiagnosticsUnderlineWarning cterm=undercurl gui=undercurl
