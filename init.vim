@@ -1,4 +1,5 @@
 call plug#begin()
+Plug 'huytd/vim-nord-light-brighter'
 Plug 'tpope/vim-fugitive'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'thinca/vim-quickrun'
@@ -239,7 +240,7 @@ function! ChangeBackground()
     highlight NormalFloat guibg=#222d2e
   else
     set background=light  " for the light version of the theme
-    colorscheme tutti
+    colorscheme nord-light-brighter
     highlight BufferTabpageFill guibg=#ffffff
   endif
   try
