@@ -1,4 +1,5 @@
 call plug#begin()
+Plug 'rose-pine/neovim'
 Plug 'huytd/vim-nord-light-brighter'
 Plug 'tpope/vim-fugitive'
 Plug 'editorconfig/editorconfig-vim'
@@ -23,7 +24,6 @@ Plug 'ziglang/zig.vim'
 " Nvim LSP gang
 Plug 'ray-x/go.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-treesitter/nvim-treesitter-angular'
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
@@ -38,15 +38,6 @@ Plug 'nvim-lua/lsp-status.nvim'
 call plug#end()
 
 filetype plugin indent on
-
-" Neovide Config
-augroup neovide_gui
-  set guifont=Iosevka\ Nerd\ Font:h15
-  let g:neovide_cursor_animation_length=0.1
-  let g:neovide_cursor_trail_length=0.1
-  let g:neovide_floating_blur = 0
-  let g:neovide_window_floating_blur = 0
-augroup END
 
 " Terminal config
 augroup neovim_terminal
@@ -240,8 +231,9 @@ function! ChangeBackground()
     highlight NormalFloat guibg=#222d2e
   else
     set background=light  " for the light version of the theme
-    colorscheme nord-light-brighter
-    highlight BufferTabpageFill guibg=#ffffff
+    colorscheme nord-solarized
+    " highlight BufferTabpageFill guibg=#ffffff
+    " highlight MatchParen guibg=#55efc4 guifg=#000000
   endif
   try
     execute "AirlineRefresh"
@@ -249,7 +241,6 @@ function! ChangeBackground()
   endtry
 endfunction
 " initialize the colorscheme for the first run
-call ChangeBackground()
 
 " Key binding
 let mapleader=" "
@@ -261,6 +252,7 @@ nnoremap <Leader>wk :wincmd k<CR>
 nnoremap <Leader>wj :wincmd j<CR>
 nnoremap <Leader>w= :wincmd =<CR>
 nnoremap <Leader>e :QuickRun<CR>
+nnoremap <Leader>0 :!make<CR>
 nnoremap <Leader>wb :e#<CR>
 nnoremap <Leader>q :bd<CR>
 nnoremap <Leader>c :bd!<CR>
@@ -281,6 +273,8 @@ nnoremap <Leader>9 :BufferLast<CR>
 " Test
 nnoremap <leader>t :TestNearest<CR>
 nnoremap <leader>T :TestFile<CR>
+" Cargo Run
+nnoremap <leader>r :!cargo run<CR>
 
 nnoremap - <c-o> " backup the C-o key
 
@@ -389,12 +383,9 @@ let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 " Some custom style
 
-if !(has('gui_vimr'))
-  highlight SignColumn guibg=NONE
-  highlight VertSplit guibg=NONE
-  highlight LineNr guibg=NONE
-endif
-
+highlight SignColumn guibg=NONE
+highlight VertSplit guibg=NONE
+highlight LineNr guibg=NONE
 highlight EndOfBuffer ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
 highlight LspDiagnosticsUnderlineError cterm=undercurl gui=undercurl
 highlight LspDiagnosticsUnderlineHint cterm=undercurl gui=undercurl
@@ -597,6 +588,19 @@ require('gitsigns').setup{}
 
 -- go
 require('go').setup()
+
+-- theme
+require('rose-pine').setup({
+    dark_variant = 'moon',
+    bold_vert_split = false,
+    disable_italics = true,
+    highlight_groups = {
+        LineNr  = { fg = '#39364b' },
+        IndentBlanklineChar  = { fg = '#2e2b3c' },
+        VertSplit  = { fg = '#17161f' }
+    }
+})
+vim.cmd('colorscheme rose-pine')
 
 EOF
 
