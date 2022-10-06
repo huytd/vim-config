@@ -1,7 +1,7 @@
 call plug#begin()
-Plug 'rose-pine/neovim'
+Plug 'voldikss/vim-floaterm'
+Plug 'nvim-lua/plenary.nvim'
 Plug 'huytd/vim-nord-light-brighter'
-Plug 'tpope/vim-fugitive'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'thinca/vim-quickrun'
 Plug 'vim-test/vim-test'
@@ -12,13 +12,11 @@ Plug 'terryma/vim-expand-region'
 " LUA ZONE
 Plug 'andymass/vim-matchup'
 Plug 'lukas-reineke/indent-blankline.nvim'
-Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'romgrk/barbar.nvim'
 Plug 'windwp/nvim-autopairs'
 Plug 'terrortylor/nvim-comment'
-Plug 'blackCauldron7/surround.nvim'
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'ziglang/zig.vim'
 " Nvim LSP gang
@@ -139,10 +137,12 @@ set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
 
 set tabstop=4
-set softtabstop=4
+set softtabstop=0
+set preserveindent
+set copyindent
 set shiftwidth=4
 set shiftround
-set expandtab
+set noexpandtab
 
 set autoindent
 set smartindent
@@ -164,83 +164,9 @@ map g/ <Plug>(incsearch-stay)
 
 set wildoptions=pum
 set pumblend=1
-" Floating Term
-let s:float_term_border_win = 0
-let s:float_term_win = 0
-function! FloatTerm(...)
-  " Configuration
-  let height = float2nr((&lines - 2) * 0.6)
-  let row = float2nr((&lines - height) / 2)
-  let width = float2nr(&columns * 0.6)
-  let col = float2nr((&columns - width) / 2)
-  " Border Window
-  let border_opts = {
-        \ 'relative': 'editor',
-        \ 'row': row - 1,
-        \ 'col': col - 2,
-        \ 'width': width + 4,
-        \ 'height': height + 2,
-        \ 'style': 'minimal'
-        \ }
-  " Terminal Window
-  let opts = {
-        \ 'relative': 'editor',
-        \ 'row': row,
-        \ 'col': col,
-        \ 'width': width,
-        \ 'height': height,
-        \ 'style': 'minimal'
-        \ }
-  let top = "╭" . repeat("─", width + 2) . "╮"
-  let mid = "│" . repeat(" ", width + 2) . "│"
-  let bot = "╰" . repeat("─", width + 2) . "╯"
-  let lines = [top] + repeat([mid], height) + [bot]
-  let bbuf = nvim_create_buf(v:false, v:true)
-  call nvim_buf_set_lines(bbuf, 0, -1, v:true, lines)
-  let s:float_term_border_win = nvim_open_win(bbuf, v:true, border_opts)
-  let buf = nvim_create_buf(v:false, v:true)
-  let s:float_term_win = nvim_open_win(buf, v:true, opts)
-  " Styling
-  hi FloatWinBorder guifg=#87bb7c
-  call setwinvar(s:float_term_border_win, '&winhl', 'Normal:FloatWinBorder')
-  call setwinvar(s:float_term_win, '&winhl', 'Normal:Normal')
-  if a:0 == 0
-    terminal
-  else
-    call termopen(a:1)
-  endif
-  startinsert
-  " Close border window when terminal window close
-  autocmd TermClose * ++once :bd! | call nvim_win_close(s:float_term_border_win, v:true)
-endfunction
 
 let g:quickrun_config = {}
 let g:quickrun_config.go = { 'command': 'go', 'exec': '%c run *.go' }
-
-" ChangeBackground changes the background mode based on macOS's `Appearance`
-" setting. We also refresh the statusline colors to reflect the new mode.
-function! ChangeBackground()
-  if system("defaults read -g AppleInterfaceStyle") =~ '^Dark'
-    set background=dark   " for the dark version of the theme
-    colorscheme hiccup
-    highlight IndentBlanklineChar guifg=#333a45
-    highlight NvimTreeIndentMarker guifg=#333a45
-    highlight BufferTabpageFill guibg=#181e24
-    highlight LspDiagnosticsDefaultHint guifg=#677674
-    highlight FloatBorder guibg=#222d2e guifg=#FFFFFF
-    highlight NormalFloat guibg=#222d2e
-  else
-    set background=light  " for the light version of the theme
-    colorscheme nord-solarized
-    " highlight BufferTabpageFill guibg=#ffffff
-    " highlight MatchParen guibg=#55efc4 guifg=#000000
-  endif
-  try
-    execute "AirlineRefresh"
-  catch
-  endtry
-endfunction
-" initialize the colorscheme for the first run
 
 " Key binding
 let mapleader=" "
@@ -283,7 +209,7 @@ map <Leader>aj :belowright 10split +term<CR>
 " Open terminal
 nnoremap <Leader>at :tabnew +term<CR>
 " Floating terminal
-nnoremap <Leader>ag :call FloatTerm()<CR>
+nnoremap <Leader>ag :FloatermToggle<CR>
 
 nnoremap <silent> <Leader>pf <cmd>Telescope find_files theme=get_dropdown previewer=false<CR>
 nnoremap <silent> <leader>f <cmd>lua require('telescope.builtin').find_files({ cwd = vim.fn.expand('%:p:h'), theme=get_dropdown, previewer=false, path_display= { 'absolute' } })<CR>
@@ -303,11 +229,6 @@ nnoremap <Leader><Leader>1 :diffget 1<CR>:diffupdate<CR>
 nnoremap <Leader><Leader>2 :diffget 2<CR>:diffupdate<CR>
 
 set clipboard=unnamedplus
-
-function! DrawGitBranchInfo()
-  let branch = fugitive#head()
-  return len(branch) > 0 ? " " . branch : ""
-endfunction
 
 function! ShortenFileName()
   let name = ""
@@ -355,7 +276,7 @@ fun! s:disable_statusline(bn)
      setlocal statusline=%#NonText#\ %{ShortenFileName()}
      setlocal statusline+=%=
      setlocal statusline+=\ %{LspStatus()}
-     setlocal statusline+=\ %l:%c\ %{DrawGitBranchInfo()}\ %{GetProjectName()}
+     setlocal statusline+=\ %l:%c\ %{GetProjectName()}
    endif
 endfunction
 
@@ -383,6 +304,8 @@ let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 " Some custom style
 
+colorscheme hiccup
+
 highlight SignColumn guibg=NONE
 highlight VertSplit guibg=NONE
 highlight LineNr guibg=NONE
@@ -391,6 +314,7 @@ highlight LspDiagnosticsUnderlineError cterm=undercurl gui=undercurl
 highlight LspDiagnosticsUnderlineHint cterm=undercurl gui=undercurl
 highlight LspDiagnosticsUnderlineWarning cterm=undercurl gui=undercurl
 highlight LspDiagnosticsUnderlineInformation cterm=undercurl gui=undercurl
+highlight! IndentBlanklineChar guifg=#515772
 
 " LSP Config
 lua << EOF
@@ -489,6 +413,8 @@ end)
       ['<C-e>'] = cmp.mapping.close(),
       ['<CR>'] = cmp.mapping.confirm({ select = true }),
       ['<Tab>'] = cmp.mapping.select_next_item(),
+      ['<C-n>'] = cmp.mapping.select_next_item(),
+      ['<C-p>'] = cmp.mapping.select_prev_item(),
     },
     sources = {
       { name = 'vsnip' },
@@ -575,9 +501,6 @@ require('telescope').load_extension('fzf')
 -- nvim-comment
 require('nvim_comment').setup()
 
--- surround
-require("surround").setup{}
-
 -- autopairs
 require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt", "vim", "html" }
@@ -589,19 +512,6 @@ require('gitsigns').setup{}
 -- go
 require('go').setup()
 
--- theme
-require('rose-pine').setup({
-    dark_variant = 'moon',
-    bold_vert_split = false,
-    disable_italics = true,
-    highlight_groups = {
-        LineNr  = { fg = '#39364b' },
-        IndentBlanklineChar  = { fg = '#2e2b3c' },
-        VertSplit  = { fg = '#17161f' }
-    }
-})
-vim.cmd('colorscheme rose-pine')
-
 EOF
 
 nnoremap <silent> ga <cmd>lua require('telescope.builtin').lsp_code_actions(require('telescope.themes').get_cursor())<CR>
@@ -611,4 +521,5 @@ nnoremap <silent> gD <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> ]e <cmd>lua vim.lsp.diagnostic.goto_next({popup_opts = {border = "single"}})<CR>
 nnoremap <silent> [e <cmd>lua vim.lsp.diagnostic.goto_prev({popup_opts = {border = "single"}})<CR>
+
 
