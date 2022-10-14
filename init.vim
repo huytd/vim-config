@@ -14,7 +14,8 @@ Plug 'andymass/vim-matchup'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-Plug 'romgrk/barbar.nvim'
+Plug 'nvim-telescope/telescope-ui-select.nvim'
+Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
 Plug 'windwp/nvim-autopairs'
 Plug 'terrortylor/nvim-comment'
 Plug 'lewis6991/gitsigns.nvim'
@@ -87,9 +88,6 @@ let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4
 let g:netrw_winsize = 25
-
-let bufferline = get(g:, 'bufferline', {})
-let bufferline.icon_close_tab = '×'
 
 inoremap jk <ESC>
 vnoremap <M-/> <Esc>/\%V
@@ -187,15 +185,16 @@ nnoremap <Leader>sr :so .vimsession<CR>
 nnoremap <Leader><Leader>r :so ~/.config/nvim/init.vim<CR>
 nnoremap <Leader>n :Vex!<CR>
 "Buffer
-nnoremap <Leader>1 :BufferGoto 1<CR>
-nnoremap <Leader>2 :BufferGoto 2<CR>
-nnoremap <Leader>3 :BufferGoto 3<CR>
-nnoremap <Leader>4 :BufferGoto 4<CR>
-nnoremap <Leader>5 :BufferGoto 5<CR>
-nnoremap <Leader>6 :BufferGoto 6<CR>
-nnoremap <Leader>7 :BufferGoto 7<CR>
-nnoremap <Leader>8 :BufferGoto 8<CR>
-nnoremap <Leader>9 :BufferLast<CR>
+nnoremap <Leader>1 :BufferLineGoToBuffer 1<CR>
+nnoremap <Leader>2 :BufferLineGoToBuffer 2<CR>
+nnoremap <Leader>3 :BufferLineGoToBuffer 3<CR>
+nnoremap <Leader>4 :BufferLineGoToBuffer 4<CR>
+nnoremap <Leader>5 :BufferLineGoToBuffer 5<CR>
+nnoremap <Leader>6 :BufferLineGoToBuffer 6<CR>
+nnoremap <Leader>7 :BufferLineGoToBuffer 7<CR>
+nnoremap <Leader>8 :BufferLineGoToBuffer 8<CR>
+nnoremap <Leader>9 :BufferLineGoToBuffer -1<CR>
+nnoremap <Leader>= :BufferLineTogglePin<CR>
 " Test
 nnoremap <leader>t :TestNearest<CR>
 nnoremap <leader>T :TestFile<CR>
@@ -289,11 +288,11 @@ set termguicolors " this variable must be enabled for colors to be applied prope
 
 " Multiple Cursor
 let g:multi_cursor_use_default_mapping=0
-let g:multi_cursor_start_word_key      = '<C-d>'
+let g:multi_cursor_start_word_key      = '<C-s>'
 let g:multi_cursor_select_all_word_key = '<C-L>'
-let g:multi_cursor_start_key           = 'g<C-d>'
+let g:multi_cursor_start_key           = 'g<C-s>'
 let g:multi_cursor_select_all_key      = 'g<C-L>'
-let g:multi_cursor_next_key            = '<C-d>'
+let g:multi_cursor_next_key            = '<C-s>'
 let g:multi_cursor_prev_key            = '<C-p>'
 let g:multi_cursor_skip_key            = '<C-i>'
 let g:multi_cursor_quit_key            = '<Esc>'
@@ -314,7 +313,7 @@ highlight LspDiagnosticsUnderlineError cterm=undercurl gui=undercurl
 highlight LspDiagnosticsUnderlineHint cterm=undercurl gui=undercurl
 highlight LspDiagnosticsUnderlineWarning cterm=undercurl gui=undercurl
 highlight LspDiagnosticsUnderlineInformation cterm=undercurl gui=undercurl
-highlight! IndentBlanklineChar guifg=#515772
+highlight! link IndentBlanklineChar LineNr
 
 " LSP Config
 lua << EOF
@@ -493,10 +492,14 @@ defaults = {
         case_mode = "smart_case", -- or "ignore_case" or "respect_case"
         -- the default case_mode is "smart_case"
         },
+    	["ui-select"] = {
+    		require('telescope.themes').get_cursor({})
+    	}
       }
   }
 }
 require('telescope').load_extension('fzf')
+require('telescope').load_extension('ui-select')
 
 -- nvim-comment
 require('nvim_comment').setup()
@@ -512,10 +515,16 @@ require('gitsigns').setup{}
 -- go
 require('go').setup()
 
+-- bufferline
+require("bufferline").setup{
+	options = {
+		separator_style = "slant"
+	}
+}
+
 EOF
 
-nnoremap <silent> ga <cmd>lua require('telescope.builtin').lsp_code_actions(require('telescope.themes').get_cursor())<CR>
-vnoremap <silent> ga :<C-U><cmd>lua require('telescope.builtin').lsp_range_code_actions(require('telescope.themes').get_cursor())<CR>
+nnoremap <silent> ga <cmd>lua vim.lsp.buf.code_action()<CR>
 nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> gD <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
